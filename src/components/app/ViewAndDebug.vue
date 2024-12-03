@@ -102,7 +102,7 @@ const clearMessages = () => {
             <icon-plus-circle class="text-base" />
           </a-button>
           <a-button class="mr-5 shrink-0" type="text" shape="circle" @click="sendMessage">
-            <icon-send class="text-base" />
+            <icon-send class="text-base -rotate-45" />
           </a-button>
         </div>
       </div>
