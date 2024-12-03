@@ -1,4 +1,6 @@
-import { API_PREFIX } from '@/config'
+import { API_PREFIX, httpCode } from '@/config'
+import type { BaseResponse } from '@/models/base'
+import { Message } from '@arco-design/web-vue'
 
 const TIMEOUT = 100 * 1000
 
@@ -46,11 +48,20 @@ const baseFetch = <T>(url: string, fetchOptions: FetchOptions): Promise<T> => {
     const timeoutId = setTimeout(() => {
       controller.abort()
       reject(new Error('timeout'))
+      Message.error('请求超时')
     }, TIMEOUT)
 
     fetch(urlWithPrefix, options as RequestInit)
-      .then((res) => res.json())
-      .then(resolve)
+      .then((res) => res.json() as Promise<BaseResponse<unknown>>)
+      .then((json) => {
+        if (json.code !== httpCode.success) {
+          Message.error(json.message)
+          reject(json)
+          return
+        }
+
+        resolve(json as T)
+      })
       .catch(reject)
       .finally(() => {
         clearTimeout(timeoutId)
