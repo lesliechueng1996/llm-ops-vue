@@ -11,6 +11,15 @@ const router = createRouter({
       component: DefaultLayout,
       children: [
         {
+          path: '',
+          redirect: { name: 'pages-home' },
+        },
+        {
+          path: 'home',
+          name: 'pages-home',
+          component: () => import('@/views/pages/HomeView.vue'),
+        },
+        {
           path: 'space/apps',
           name: 'space-apps-list',
           component: () => import('@/views/space/apps/ListView.vue'),
@@ -25,6 +34,11 @@ const router = createRouter({
           path: 'auth/login',
           name: 'auth-login',
           component: () => import('@/views/auth/LoginView.vue'),
+        },
+        {
+          path: 'space/apps/:id',
+          name: 'space-apps-detail',
+          component: () => import('@/views/space/apps/DetailView.vue'),
         },
       ],
     },
