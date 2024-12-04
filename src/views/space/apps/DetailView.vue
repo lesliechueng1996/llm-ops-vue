@@ -5,7 +5,7 @@ import ViewAndDebug from '@/components/app/ViewAndDebug.vue'
 <template>
   <div class="w-screen h-screen flex flex-col">
     <header class="w-full h-[74px] bg-gray-100 shrink-0">编排</header>
-    <main class="w-full flex-1 flex">
+    <main class="w-full flex-1 flex min-h-0">
       <!-- 应用编排 -->
       <div class="w-2/3 h-full flex flex-col bg-gray-50">
         <header class="w-full h-16 border-b-[1px] border-gray-200 shrink-0">应用编排</header>

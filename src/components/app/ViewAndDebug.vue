@@ -65,7 +65,7 @@ const clearMessages = () => {
         <span>长期记忆</span>
       </button>
     </header>
-    <section class="flex-1">
+    <section class="flex-1 overflow-y-scroll">
       <!-- empty chat message -->
       <div v-if="messages.length === 0" class="text-center pt-48 space-y-2">
         <a-avatar :size="70" shape="square">Arco</a-avatar>
@@ -101,7 +101,13 @@ const clearMessages = () => {
           <a-button class="mr-5 shrink-0" type="text" shape="circle">
             <icon-plus-circle class="text-base" />
           </a-button>
-          <a-button class="mr-5 shrink-0" type="text" shape="circle" @click="sendMessage">
+          <a-button
+            class="mr-5 shrink-0"
+            type="text"
+            shape="circle"
+            @click="sendMessage"
+            :disabled="isLoading"
+          >
             <icon-send class="text-base -rotate-45" />
           </a-button>
         </div>
