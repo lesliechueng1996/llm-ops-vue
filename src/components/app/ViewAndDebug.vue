@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, useTemplateRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
 import ChatMessage from './ChatMessage.vue'
@@ -15,6 +15,14 @@ const messages = ref<Message[]>([]) // 聊天消息列表
 const query = ref<string>('') // 输入框内容
 const isLoading = ref(false) // 是否正在加载
 const route = useRoute()
+const messageWrap = useTemplateRef('messages-wrap')
+
+const scrollMessageToBottom = () => {
+  if (!messageWrap.value) {
+    return
+  }
+  messageWrap.value.scrollTop = messageWrap.value.scrollHeight
+}
 
 const sendMessage = async () => {
   if (!query.value) {
@@ -52,6 +60,11 @@ const clearMessages = () => {
   messages.value = []
   isLoading.value = false
 }
+
+watch([messages, isLoading], scrollMessageToBottom, {
+  deep: true,
+  flush: 'post',
+})
 </script>
 
 <template>
@@ -65,7 +78,7 @@ const clearMessages = () => {
         <span>长期记忆</span>
       </button>
     </header>
-    <section class="flex-1 overflow-y-scroll">
+    <section class="flex-1 overflow-y-scroll" ref="messages-wrap">
       <!-- empty chat message -->
       <div v-if="messages.length === 0" class="text-center pt-48 space-y-2">
         <a-avatar :size="70" shape="square">Arco</a-avatar>
