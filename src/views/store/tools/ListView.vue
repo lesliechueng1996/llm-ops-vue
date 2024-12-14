@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import { getCategories, getBuiltinTools } from '@/services/builtin-tool'
 import { type GetCategoriesResponse, type GetBuiltinToolsResponse } from '@/models/builtin-tool'
-import { reactive, onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import ToolProviderCard from '@/components/store/tools/ToolProviderCard.vue'
+import ToolProviderDrawer from '@/components/store/tools/ToolProviderDrawer.vue'
 
-const categories = reactive<GetCategoriesResponse['data']>([])
-const providers = reactive<GetBuiltinToolsResponse['data']>([])
+type Provider = GetBuiltinToolsResponse['data'][0]
+
+const categories = ref<GetCategoriesResponse['data']>([])
+const providers = ref<Provider[]>([])
+
+const selectedProvider = ref<Provider | null>(null)
 
 // filter
 const selectedCategory = ref<string>('')
 const searchWord = ref<string>('')
 
 const filteredProviders = computed(() => {
-  return providers.filter((provider) => {
+  return providers.value.filter((provider) => {
     return (
       (selectedCategory.value === '' || provider.category === selectedCategory.value) &&
       (searchWord.value === '' ||
@@ -27,8 +32,8 @@ onMounted(async () => {
   try {
     isLoading.value = true
     const res = await Promise.all([getCategories(), getBuiltinTools()])
-    categories.push(...res[0].data)
-    providers.push(...res[1].data)
+    categories.value = [...res[0].data]
+    providers.value = [...res[1].data]
   } finally {
     isLoading.value = false
   }
@@ -86,9 +91,12 @@ onMounted(async () => {
           v-for="provider in filteredProviders"
           :key="provider.name"
           :provider="provider"
+          @click="selectedProvider = provider"
         />
       </div>
     </a-spin>
+
+    <tool-provider-drawer :selectedProvider="selectedProvider" @cancel="selectedProvider = null" />
   </div>
 </template>
 

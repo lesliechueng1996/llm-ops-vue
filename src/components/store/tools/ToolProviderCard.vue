@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type GetBuiltinToolsResponse } from '@/models/builtin-tool'
 import { format } from 'date-fns'
-import { API_PREFIX } from '@/config'
+import ToolProviderCardHeader from './ToolProviderCardHeader.vue'
 
 defineProps<{
   provider: GetBuiltinToolsResponse['data'][0]
@@ -12,20 +12,7 @@ defineProps<{
   <div
     class="w-96 h-48 rounded-lg border border-gray-300 p-4 flex flex-col gap-3 bg-white cursor-pointer hover:shadow-md hover:scale-105 transition-all"
   >
-    <div class="flex items-center gap-3 shrink-0">
-      <a-avatar
-        class="w-10 h-10"
-        shape="square"
-        :imageUrl="`${API_PREFIX}/builtin-tools/${provider.name}/icon`"
-        :style="{ backgroundColor: provider.background }"
-      ></a-avatar>
-      <div>
-        <p class="text-gray-700 font-bold text-base">{{ provider.label }}</p>
-        <p class="text-gray-500 text-xs">
-          提供商 {{ provider.name }} · {{ provider.tools.length }} 插件
-        </p>
-      </div>
-    </div>
+    <tool-provider-card-header class="shrink-0" :provider="provider" />
     <p class="text-sm text-gray-500 leading-5 line-clamp-4 grow">
       {{ provider.description }}
     </p>

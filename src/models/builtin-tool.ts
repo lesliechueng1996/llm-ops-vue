@@ -16,6 +16,30 @@ export type GetBuiltinToolsResponse = BaseResponse<
     description: string
     label: string
     name: string
-    tools: Array<unknown>
+    tools: Array<{
+      name: string
+      label: string
+      description: string
+      inputs: Array<{
+        name: string
+        description: string
+        type: string
+        required: boolean
+      }>
+      params: Array<{
+        name: string
+        label: string
+        type: 'string' | 'number' | 'boolean' | 'select'
+        required: boolean
+        default: string | number | boolean
+        min: number | null
+        max: number | null
+        help: string | null
+        options: Array<{
+          label: string
+          value: string
+        }>
+      }>
+    }>
   }>
 >
