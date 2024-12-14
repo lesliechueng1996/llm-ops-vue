@@ -4,6 +4,7 @@ import { type GetCategoriesResponse, type GetBuiltinToolsResponse } from '@/mode
 import { onMounted, ref, computed } from 'vue'
 import ToolProviderCard from '@/components/store/tools/ToolProviderCard.vue'
 import ToolProviderDrawer from '@/components/store/tools/ToolProviderDrawer.vue'
+import CommonHeader from '@/components/CommonHeader.vue'
 
 type Provider = GetBuiltinToolsResponse['data'][0]
 
@@ -44,15 +45,11 @@ onMounted(async () => {
   <div class="h-screen px-6">
     <a-spin class="w-full h-full" :loading="isLoading" tip="加载中...">
       <!-- header -->
-      <header class="flex items-center justify-between py-6">
-        <div class="flex gap-2 items-center">
-          <a-avatar class="w-8 h-8 bg-blue-700 p-2">
-            <icon-common />
-          </a-avatar>
-          <p class="text-gray-700 text-xl font-medium">插件广场</p>
-        </div>
-        <a-button type="primary" class="rounded-lg">创建自定义插件</a-button>
-      </header>
+      <common-header title="插件广场" btn-text="创建自定义插件">
+        <template #icon>
+          <icon-common />
+        </template>
+      </common-header>
 
       <!-- filter -->
       <div class="flex items-center justify-between mb-6">

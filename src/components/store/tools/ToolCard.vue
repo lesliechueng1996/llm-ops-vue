@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { type GetBuiltinToolsResponse } from '@/models/builtin-tool'
 import { ref } from 'vue'
+import { formatInputType } from '@/utils/tool'
 
 type Tool = GetBuiltinToolsResponse['data'][0]['tools'][0]
 
@@ -27,7 +28,7 @@ const isParamsVisible = ref(false)
       <div v-for="input in tool.inputs" :key="input.name" class="text-xs space-y-1">
         <div class="space-x-2">
           <span class="font-bold text-gray-700">{{ input.name }}</span>
-          <span class="text-gray-500">{{ input.type }}</span>
+          <span class="text-gray-500">{{ formatInputType(input.type) }}</span>
           <span v-if="input.required" class="text-red-700">必填</span>
         </div>
         <p>{{ input.description }}</p>

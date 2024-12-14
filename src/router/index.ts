@@ -1,6 +1,7 @@
 import { isLogin } from '@/utils/auth'
 import BlankLayout from '@/views/layouts/BlankLayout.vue'
 import DefaultLayout from '@/views/layouts/DefaultLayout.vue'
+import SpaceLayoutView from '@/views/space/SpaceLayoutView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -20,9 +21,30 @@ const router = createRouter({
           component: () => import('@/views/pages/HomeView.vue'),
         },
         {
-          path: 'space/apps',
-          name: 'space-apps-list',
-          component: () => import('@/views/space/apps/ListView.vue'),
+          path: 'space/',
+          component: SpaceLayoutView,
+          children: [
+            {
+              path: 'apps',
+              name: 'space-apps-list',
+              component: () => import('@/views/space/apps/ListView.vue'),
+            },
+            {
+              path: 'tools',
+              name: 'space-tools-list',
+              component: () => import('@/views/space/tools/ListView.vue'),
+            },
+            {
+              path: 'workflows',
+              name: 'space-workflows-list',
+              component: () => import('@/views/space/workflows/ListView.vue'),
+            },
+            {
+              path: 'datasets',
+              name: 'space-datasets-list',
+              component: () => import('@/views/space/datasets/ListView.vue'),
+            },
+          ],
         },
         {
           path: 'store/apps',

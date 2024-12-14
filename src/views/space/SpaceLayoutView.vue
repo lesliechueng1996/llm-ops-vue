@@ -1,0 +1,60 @@
+<script setup lang="ts">
+import CommonHeader from '@/components/CommonHeader.vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const pathTipMap: Record<string, string> = {
+  '/space/apps': 'AI应用',
+  '/space/tools': '插件',
+  '/space/workflows': '工作流',
+  '/space/datasets': '知识库',
+}
+
+const tipText = computed(() => {
+  const path = route.path
+  return pathTipMap[path] || ''
+})
+
+const searchWord = ref('')
+</script>
+
+<template>
+  <div class="h-screen px-6">
+    <!-- header -->
+    <common-header title="个人空间" :btn-text="`创建自定义${tipText}`">
+      <template #icon>
+        <icon-user />
+      </template>
+    </common-header>
+
+    <!-- nav -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="space-x-1">
+        <router-link
+          v-for="path in Object.keys(pathTipMap)"
+          :key="path"
+          class="px-4 py-1.5"
+          :to="path"
+          active-class="bg-gray-200 rounded-lg"
+          >{{ pathTipMap[path] }}</router-link
+        >
+      </div>
+      <a-input
+        class="w-52 rounded-lg bg-white border border-gray-200"
+        :placeholder="`请输入${tipText}名称`"
+        allow-clear
+        v-model="searchWord"
+      >
+        <template #prefix>
+          <icon-search />
+        </template>
+      </a-input>
+    </div>
+
+    <router-view />
+  </div>
+</template>
+
+<style scoped></style>
