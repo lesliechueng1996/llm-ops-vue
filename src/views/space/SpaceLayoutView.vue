@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CommonHeader from '@/components/CommonHeader.vue'
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 
@@ -18,19 +18,33 @@ const tipText = computed(() => {
 })
 
 const searchWord = ref('')
+const router = useRouter()
+
+const commitSearch = (event: FocusEvent | KeyboardEvent) => {
+  const target = event.target as HTMLInputElement
+  target.blur()
+  router.push({ query: { search: searchWord.value } })
+}
+
+onMounted(() => {
+  const search = route.query.search
+  if (search) {
+    searchWord.value = search as string
+  }
+})
 </script>
 
 <template>
-  <div class="h-screen px-6">
+  <div class="h-screen px-6 flex flex-col">
     <!-- header -->
-    <common-header title="个人空间" :btn-text="`创建自定义${tipText}`">
+    <common-header class="shrink-0" title="个人空间" :btn-text="`创建自定义${tipText}`">
       <template #icon>
         <icon-user />
       </template>
     </common-header>
 
     <!-- nav -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-6 shrink-0">
       <div class="space-x-1">
         <router-link
           v-for="path in Object.keys(pathTipMap)"
@@ -46,6 +60,8 @@ const searchWord = ref('')
         :placeholder="`请输入${tipText}名称`"
         allow-clear
         v-model="searchWord"
+        @press-enter="commitSearch"
+        @blur="commitSearch"
       >
         <template #prefix>
           <icon-search />

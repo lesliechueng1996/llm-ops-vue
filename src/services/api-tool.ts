@@ -8,9 +8,9 @@ export const getApiToolProvidersWithPage = async (
 ) => {
   return get<GetApiToolProvidersWithPageResponse>('/api-tools', {
     params: {
-      searchWord,
-      page,
-      pageSize,
+      search_word: searchWord,
+      current_page: page,
+      page_size: pageSize,
     },
   })
 }

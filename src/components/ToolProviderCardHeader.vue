@@ -7,6 +7,7 @@ export type CardHeaderProvider = {
   label: string
   background?: string
   tools: Tool[]
+  icon?: string
 }
 
 defineProps<{
@@ -19,7 +20,11 @@ defineProps<{
     <a-avatar
       class="w-10 h-10"
       shape="square"
-      :imageUrl="`${API_PREFIX}/builtin-tools/${provider.name}/icon`"
+      :imageUrl="
+        provider.icon?.startsWith('http')
+          ? provider.icon
+          : `${API_PREFIX}/builtin-tools/${provider.name}/icon`
+      "
       :style="{ backgroundColor: provider.background }"
     ></a-avatar>
     <div>

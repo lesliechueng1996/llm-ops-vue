@@ -6,7 +6,7 @@ export type BaseResponse<T> = {
 
 export type BasePaginationResponse<T> = BaseResponse<{
   list: T[]
-  pagination: {
+  paginator: {
     total_page: number
     total_record: number
     current_page: number

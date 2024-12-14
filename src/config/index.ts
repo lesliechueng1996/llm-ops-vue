@@ -17,3 +17,10 @@ export const typeMap: {
   float: '浮点型',
   bool: '布尔型',
 }
+
+export const initPagination = {
+  totalPage: 0,
+  totalRecord: 0,
+  currentPage: 1,
+  pageSize: 20,
+}
