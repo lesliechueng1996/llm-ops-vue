@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ViewAndDebug from '@/components/app/ViewAndDebug.vue'
+import ViewAndDebug from '@/components/space/app/ViewAndDebug.vue'
 </script>
 
 <template>
