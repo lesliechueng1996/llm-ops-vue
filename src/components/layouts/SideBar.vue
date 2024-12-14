@@ -69,7 +69,7 @@ const discoverItems = [
         </div>
         <template #content>
           <a-doption>账号设置</a-doption>
-          <a-doption class="text-red-800 hover:text-red-900">退出登录</a-doption>
+          <a-doption class="text-red-800 hover:!text-red-900">退出登录</a-doption>
         </template>
       </a-dropdown>
     </div>
