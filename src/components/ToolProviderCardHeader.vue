@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { type GetBuiltinToolsResponse } from '@/models/builtin-tool'
 import { API_PREFIX } from '@/config'
+import type { Tool } from './ToolCard.vue'
+
+export type CardHeaderProvider = {
+  name: string
+  label: string
+  background?: string
+  tools: Tool[]
+}
 
 defineProps<{
-  provider: GetBuiltinToolsResponse['data'][0]
+  provider: CardHeaderProvider
 }>()
 </script>
 

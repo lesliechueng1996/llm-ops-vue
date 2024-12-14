@@ -20,5 +20,5 @@ export type GetApiToolProvidersWithPageResponse = BasePaginationResponse<{
       description: string
     }>
   }>
-  created_at: string
+  created_at: number
 }>

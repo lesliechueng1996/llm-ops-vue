@@ -2,8 +2,8 @@
 import { getCategories, getBuiltinTools } from '@/services/builtin-tool'
 import { type GetCategoriesResponse, type GetBuiltinToolsResponse } from '@/models/builtin-tool'
 import { onMounted, ref, computed } from 'vue'
-import ToolProviderCard from '@/components/store/tools/ToolProviderCard.vue'
-import ToolProviderDrawer from '@/components/store/tools/ToolProviderDrawer.vue'
+import ToolProviderCard from '@/components/ToolProviderCard.vue'
+import ToolProviderDrawer from '@/components/ToolProviderDrawer.vue'
 import CommonHeader from '@/components/CommonHeader.vue'
 
 type Provider = GetBuiltinToolsResponse['data'][0]

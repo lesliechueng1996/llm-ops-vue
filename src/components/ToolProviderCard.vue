@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { type GetBuiltinToolsResponse } from '@/models/builtin-tool'
 import { format } from 'date-fns'
-import ToolProviderCardHeader from './ToolProviderCardHeader.vue'
+import ToolProviderCardHeader, { type CardHeaderProvider } from './ToolProviderCardHeader.vue'
+
+export type Provider = CardHeaderProvider & {
+  description: string
+  created_at: number
+}
 
 defineProps<{
-  provider: GetBuiltinToolsResponse['data'][0]
+  provider: Provider
 }>()
 </script>
 

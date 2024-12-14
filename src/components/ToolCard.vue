@@ -1,9 +1,18 @@
 <script setup lang="ts">
-import { type GetBuiltinToolsResponse } from '@/models/builtin-tool'
 import { ref } from 'vue'
 import { formatInputType } from '@/utils/tool'
 
-type Tool = GetBuiltinToolsResponse['data'][0]['tools'][0]
+export type Tool = {
+  name: string
+  label: string
+  description: string
+  inputs: {
+    name: string
+    type: string
+    required: boolean
+    description: string
+  }[]
+}
 
 defineProps<{
   tool: Tool
@@ -25,7 +34,7 @@ const isParamsVisible = ref(false)
         <span class="font-bold text-xs text-gray-500 leading-3">参数</span>
         <div class="border-b border-b-gray-300 grow"></div>
       </div>
-      <div v-for="input in tool.inputs" :key="input.name" class="text-xs space-y-1">
+      <div v-for="input in tool.inputs" :key="input.name" class="text-xs space-y-1 mb-3">
         <div class="space-x-2">
           <span class="font-bold text-gray-700">{{ input.name }}</span>
           <span class="text-gray-500">{{ formatInputType(input.type) }}</span>

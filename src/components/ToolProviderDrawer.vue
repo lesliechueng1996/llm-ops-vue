@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import ToolProviderCardHeader from '@/components/store/tools/ToolProviderCardHeader.vue'
-import { type GetBuiltinToolsResponse } from '@/models/builtin-tool'
+import ToolProviderCardHeader, {
+  type CardHeaderProvider,
+} from '@/components/ToolProviderCardHeader.vue'
 import ToolCard from './ToolCard.vue'
 
+type Provider = CardHeaderProvider & {
+  description: string
+}
+
 defineProps<{
-  selectedProvider: GetBuiltinToolsResponse['data'][0] | null
+  selectedProvider: Provider | null
 }>()
 const emit = defineEmits<{
   (e: 'cancel'): void
