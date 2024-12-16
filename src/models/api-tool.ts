@@ -1,4 +1,4 @@
-import { type BasePaginationResponse } from './base'
+import { type BasePaginationResponse, type BaseResponse } from './base'
 
 export type GetApiToolProvidersWithPageResponse = BasePaginationResponse<{
   id: number
@@ -22,3 +22,17 @@ export type GetApiToolProvidersWithPageResponse = BasePaginationResponse<{
   }>
   created_at: number
 }>
+
+export type CreateApiToolsRequest = {
+  name: string
+  icon: string
+  description: string
+  openapi_schema: string
+  headers: Array<{
+    key: string
+    value: string
+  }>
+}
+export type CreateApiToolsResponse = BaseResponse<unknown>
+
+export type ValidateOpenapiSchemaResponse = BaseResponse<unknown>

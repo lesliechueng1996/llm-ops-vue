@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import { Message } from '@arco-design/web-vue'
+import { createApiTools, validateOpenapiSchema } from '@/services/api-tool'
 
 defineProps<{
   visible: boolean
 }>()
 
-defineEmits<{
-  cancel: () => void
+const emit = defineEmits<{
+  (e: 'cancel'): void
 }>()
 
+const formRef = ref()
 const form = reactive<{
   name: string
   description: string
@@ -70,19 +73,118 @@ const headerColumns = [
     slotName: 'optional',
   },
 ]
-// const headerDatas = ref<{ key: string; value: string }[]>([
-//   {
-//     key: '',
-//     value: '',
-//   },
-// ])
+
+const handleSubmit = async () => {
+  try {
+    const errors = await formRef.value.validate()
+    if (errors) {
+      return
+    }
+    if (!validateOpenApiSchema(form.openapiSchema)) {
+      return
+    }
+
+    await createApiTools({
+      name: form.name,
+      icon: 'https://cn.vuejs.org/viteconf.svg',
+      description: form.description,
+      openapi_schema: form.openapiSchema,
+      headers: form.headers.map((header) => ({
+        key: header.label,
+        value: header.value,
+      })),
+    })
+
+    emit('cancel')
+  } catch {
+    Message.error('创建插件失败')
+  }
+}
+
+const validateOpenApiSchema = (schemaStr: string) => {
+  try {
+    const schema = JSON.parse(schemaStr)
+    if (!schema.server) {
+      Message.error('OpenAPI Schema 缺少 server 字段')
+      return null
+    }
+    if (!schema.description) {
+      Message.error('OpenAPI Schema 缺少 description 字段')
+      return null
+    }
+    if (!schema.paths) {
+      Message.error('OpenAPI Schema 缺少 paths 字段')
+      return null
+    }
+    const allowedMethods = ['get', 'post', 'put', 'delete', 'patch']
+    const apis = []
+    for (const path of Object.keys(schema.paths)) {
+      for (const method of Object.keys(schema.paths[path])) {
+        if (allowedMethods.includes(method)) {
+          apis.push({
+            path,
+            method,
+            operation: schema.paths[path][method],
+          })
+        }
+      }
+    }
+
+    const operationIds: string[] = []
+    const tools = []
+    for (const api of apis) {
+      const operationId = api.operation.operationId
+      const description = api.operation.description
+      const parameters = api.operation.parameters || []
+
+      if (typeof operationId !== 'string' || !operationId) {
+        Message.error('operationId必须为字符串且不能为空')
+        return null
+      }
+      if (typeof description !== 'string' || !description) {
+        Message.error('description必须为字符串且不能为空')
+        return null
+      }
+      if (!Array.isArray(parameters)) {
+        Message.error('parameters必须为数组')
+        return null
+      }
+      if (operationIds.includes(operationId as string)) {
+        Message.error('operationId 重复')
+        return null
+      }
+      operationIds.push(operationId as string)
+
+      tools.push({
+        operationId: operationId as string,
+        description: description as string,
+        method: api.method,
+        path: api.path,
+      })
+    }
+
+    return tools
+  } catch (e) {
+    console.error(e)
+    Message.error('OpenAPI Schema 格式错误')
+    return null
+  }
+}
+
+const handleOpenApiSchemaBlur = async () => {
+  const tools = validateOpenApiSchema(form.openapiSchema)
+  await validateOpenapiSchema(form.openapiSchema)
+  if (tools) {
+    availableTools.value = tools
+  }
+}
 </script>
 
 <template>
-  <a-modal :visible="visible" @cancel="$emit('cancel')">
+  <a-modal :visible="visible" ok-text="保存" @cancel="emit('cancel')" @ok="handleSubmit">
     <template #title> 新建插件 </template>
     <div class="max-h-96 overflow-y-scroll">
-      <a-form :model="form" layout="vertical">
+      <a-form ref="formRef" :model="form" layout="vertical">
         <a-form-item field="icon">
           <a-upload
             class="flex !justify-center w-full"
@@ -121,6 +223,7 @@ const headerColumns = [
               minRows: 2,
               maxRows: 5,
             }"
+            @blur="handleOpenApiSchemaBlur"
           />
         </a-form-item>
         <a-form-item label="可用工具">
