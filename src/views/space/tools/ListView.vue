@@ -1,29 +1,32 @@
 <script setup lang="ts">
 import { getApiToolProvidersWithPage } from '@/services/api-tool'
 import { onMounted, onUnmounted, reactive, ref, useTemplateRef, watch } from 'vue'
-import ToolProviderCard, { type Provider } from '@/components/ToolProviderCard.vue'
-import ToolProviderDrawer from '@/components/ToolProviderDrawer.vue'
+import ToolProviderCard from '@/components/ToolProviderCard.vue'
+import ToolProviderDrawer, { type Provider } from '@/components/ToolProviderDrawer.vue'
 import { useRoute } from 'vue-router'
 import { initPagination } from '@/config'
 import NewToolModal from '@/components/space/tool/NewToolModal.vue'
+import EditToolModal from '@/components/space/tool/EditToolModal.vue'
 
 defineProps<{
   createType: string | null
 }>()
 
-defineEmits<{
-  cancelModal: () => void
+const emit = defineEmits<{
+  (e: 'cancelModal'): void
 }>()
 
 const apiToolProviders = ref<Provider[]>([])
 const isLoading = ref<boolean>(false)
 const pagination = reactive({ ...initPagination })
 
-const selectedProvider = ref<Provider | null>(null)
+const selectedProvider = ref<(Provider & { id: string }) | null>(null)
 const route = useRoute()
 
 const loadMore = useTemplateRef('load-more')
 let observer: IntersectionObserver | null = null
+
+const editProviderId = ref<string | null>(null)
 
 const loadApiToolProviders = async (isInit: boolean, search: string = '') => {
   try {
@@ -53,8 +56,6 @@ const loadApiToolProviders = async (isInit: boolean, search: string = '') => {
     if (pagination.totalPage <= pagination.currentPage && loadMore.value) {
       observer?.unobserve(loadMore.value)
     }
-
-    console.log('pagination', pagination)
   } finally {
     isLoading.value = false
   }
@@ -67,11 +68,8 @@ const initObserver = () => {
   }
 
   observer = new IntersectionObserver((entries) => {
-    console.log('1', entries)
     if (entries[0].isIntersecting) {
-      console.log('2')
       if (pagination.currentPage < pagination.totalPage) {
-        console.log('3', pagination)
         pagination.currentPage += 1
         loadApiToolProviders(false, route.query.search as string)
       }
@@ -91,7 +89,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (observer) {
-    console.log('unobserve')
     observer.disconnect()
     observer = null
   }
@@ -110,6 +107,20 @@ watch(
     initObserver()
   },
 )
+
+const handleModalCancel = () => {
+  pagination.currentPage = initPagination.currentPage
+  pagination.pageSize = initPagination.pageSize
+  pagination.totalPage = initPagination.totalPage
+  pagination.totalRecord = initPagination.totalRecord
+
+  loadApiToolProviders(true, route.query.search as string)
+
+  editProviderId.value = null
+  selectedProvider.value = null
+
+  emit('cancelModal')
+}
 </script>
 
 <template>
@@ -137,8 +148,18 @@ watch(
       </div>
     </a-spin>
 
-    <tool-provider-drawer :selectedProvider="selectedProvider" @cancel="selectedProvider = null" />
-    <new-tool-modal :visible="createType === '插件'" @cancel="$emit('cancelModal')" />
+    <tool-provider-drawer
+      :selectedProvider="selectedProvider"
+      @cancel="selectedProvider = null"
+      :canEdit="true"
+      @edit="editProviderId = $event"
+    />
+    <new-tool-modal :visible="createType === '插件'" @cancel="handleModalCancel" />
+    <edit-tool-modal
+      v-if="editProviderId"
+      :provider-id="editProviderId"
+      @cancel="handleModalCancel"
+    />
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 import { type BasePaginationResponse, type BaseResponse } from './base'
 
 export type GetApiToolProvidersWithPageResponse = BasePaginationResponse<{
-  id: number
+  id: string
   name: string
   icon: string
   description: string
@@ -36,3 +36,27 @@ export type CreateApiToolsRequest = {
 export type CreateApiToolsResponse = BaseResponse<unknown>
 
 export type ValidateOpenapiSchemaResponse = BaseResponse<unknown>
+
+export type GetApiToolResponse = BaseResponse<{
+  id: string
+  name: string
+  description: string
+  icon: string
+  openapi_schema: string
+  headers: Array<{
+    key: string
+    value: string
+  }>
+  created_at: number
+}>
+
+export type UpdateApiToolRequest = {
+  name: string
+  icon: string
+  description: string
+  openapi_schema: string
+  headers: Array<{
+    key: string
+    value: string
+  }>
+}
