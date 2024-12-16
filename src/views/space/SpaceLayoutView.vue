@@ -12,6 +12,14 @@ const pathTipMap: Record<string, string> = {
   '/space/datasets': '知识库',
 }
 
+const createType = ref<string | null>(null)
+const clearCreateType = () => {
+  createType.value = null
+}
+const handleHeaderBtnClick = () => {
+  createType.value = tipText.value
+}
+
 const tipText = computed(() => {
   const path = route.path
   return pathTipMap[path] || ''
@@ -37,7 +45,12 @@ onMounted(() => {
 <template>
   <div class="h-screen px-6 flex flex-col">
     <!-- header -->
-    <common-header class="shrink-0" title="个人空间" :btn-text="`创建自定义${tipText}`">
+    <common-header
+      class="shrink-0"
+      title="个人空间"
+      :btn-text="`创建自定义${tipText}`"
+      @click-btn="handleHeaderBtnClick"
+    >
       <template #icon>
         <icon-user />
       </template>
@@ -69,7 +82,7 @@ onMounted(() => {
       </a-input>
     </div>
 
-    <router-view />
+    <router-view :create-type="createType" @cancel-modal="clearCreateType" />
   </div>
 </template>
 

@@ -3,6 +3,10 @@ defineProps<{
   title: string
   btnText: string
 }>()
+
+const emit = defineEmits<{
+  (e: 'clickBtn'): void
+}>()
 </script>
 
 <template>
@@ -13,7 +17,9 @@ defineProps<{
       </a-avatar>
       <p class="text-gray-700 text-xl font-medium">{{ title }}</p>
     </div>
-    <a-button v-if="btnText !== ''" type="primary" class="rounded-lg">{{ btnText }}</a-button>
+    <a-button v-if="btnText !== ''" type="primary" class="rounded-lg" @click="emit('clickBtn')">{{
+      btnText
+    }}</a-button>
   </header>
 </template>
 

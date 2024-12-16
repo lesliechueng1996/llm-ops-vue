@@ -5,6 +5,15 @@ import ToolProviderCard, { type Provider } from '@/components/ToolProviderCard.v
 import ToolProviderDrawer from '@/components/ToolProviderDrawer.vue'
 import { useRoute } from 'vue-router'
 import { initPagination } from '@/config'
+import NewToolModal from '@/components/space/tool/NewToolModal.vue'
+
+defineProps<{
+  createType: string | null
+}>()
+
+defineEmits<{
+  cancelModal: () => void
+}>()
 
 const apiToolProviders = ref<Provider[]>([])
 const isLoading = ref<boolean>(false)
@@ -129,6 +138,7 @@ watch(
     </a-spin>
 
     <tool-provider-drawer :selectedProvider="selectedProvider" @cancel="selectedProvider = null" />
+    <new-tool-modal :visible="createType === '插件'" @cancel="$emit('cancelModal')" />
   </div>
 </template>
 
