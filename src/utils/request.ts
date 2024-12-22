@@ -88,3 +88,61 @@ export const put = <T>(url: string, options: FetchOptions = {}): Promise<T> => {
 export const del = <T>(url: string, options: FetchOptions = {}): Promise<T> => {
   return baseFetch(url, { ...options, method: 'DELETE' })
 }
+
+type ServerEvent = {
+  event: string
+  data: {
+    id: string
+    event: string
+    data: unknown
+  }
+}
+
+export const ssePost = async function* (url: string, fetchOptions: FetchOptions) {
+  const options = { ...baseFetchOptions, method: 'POST', ...fetchOptions }
+  const urlWithPrefix = `${API_PREFIX}${url.startsWith('/') ? url : `/${url}`}`
+  if (options.body) {
+    options.body = JSON.stringify(options.body)
+  }
+
+  const response = await fetch(urlWithPrefix, options as RequestInit)
+
+  if (!response.ok) {
+    throw new Error('网络请求失败')
+  }
+
+  if (!response.body) {
+    throw new Error('不支持的响应类型')
+  }
+
+  const reader = response.body.getReader()
+  const textDecoder = new TextDecoder()
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done || !value) {
+      break
+    }
+    const text = textDecoder.decode(value, { stream: true })
+    const lines = text.split('\n')
+    const pair: {
+      event: ServerEvent['event'] | null
+      data: ServerEvent['data'] | null
+    } = {
+      event: null,
+      data: null,
+    }
+    for (const line of lines) {
+      if (line.startsWith('event: ')) {
+        pair.event = line.substring(7)
+      } else if (line.startsWith('data: ')) {
+        pair.data = JSON.parse(line.substring(6))
+      }
+
+      if (!line.trim() && pair.event !== null && pair.data !== null) {
+        yield { ...(pair as ServerEvent) }
+        pair.event = null
+        pair.data = null
+      }
+    }
+  }
+}

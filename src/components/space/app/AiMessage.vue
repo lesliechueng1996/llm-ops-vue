@@ -1,10 +1,8 @@
 <script setup lang="ts">
 const props = defineProps<{
   content?: string
-  isLoading?: boolean
 }>()
 
-const isLoading = props.isLoading ?? false
 const content = props.content ?? ''
 </script>
 
@@ -16,7 +14,7 @@ const content = props.content ?? ''
     <div class="space-y-2">
       <p class="text-black font-bold text-sm">ChatGPT聊天机器人</p>
       <p class="bg-gray-100 px-4 py-3 text-gray-900 rounded-2xl max-w-max">
-        <template v-if="!isLoading">{{ content }}</template>
+        <template v-if="!!content">{{ content }}</template>
         <template v-else>
           <icon-loading class="text-base" />
         </template>

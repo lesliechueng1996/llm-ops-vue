@@ -3,8 +3,7 @@ import { ref, useTemplateRef, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
 import ChatMessage from './ChatMessage.vue'
-import { debugApp } from '@/services/app-service'
-import AiMessage from './AiMessage.vue'
+import { debugAppStream } from '@/services/app-service'
 
 type Message = {
   role: 'human' | 'ai'
@@ -44,12 +43,27 @@ const sendMessage = async () => {
 
   try {
     isLoading.value = true
-    const res = await debugApp(route.params.id as string, humanQuery)
-    if (isLoading.value) {
-      messages.value.push({
-        role: 'ai',
-        content: res.data.content,
-      })
+    // const res = await debugApp(route.params.id as string, humanQuery)
+    // if (isLoading.value) {
+    //   messages.value.push({
+    //     role: 'ai',
+    //     content: res.data.content,
+    //   })
+    // }
+    const res = debugAppStream(route.params.id as string, humanQuery)
+    messages.value.push({
+      role: 'ai',
+      content: '',
+    })
+
+    for await (const { event, data } of res) {
+      if (isLoading.value) {
+        const lastMessage = messages.value[messages.value.length - 1]
+
+        if (event === 'agent_message') {
+          messages.value[messages.value.length - 1].content = lastMessage.content + data.data
+        }
+      }
     }
   } finally {
     isLoading.value = false
@@ -88,13 +102,13 @@ watch([messages, isLoading], scrollMessageToBottom, {
       <!-- chat messages -->
       <div v-else class="space-y-6 px-6 py-7">
         <chat-message
-          v-for="(message, index) in messages"
-          :key="index"
+          v-for="message in messages"
+          :key="message.content"
           :role="message.role"
           :content="message.content"
         />
         <!-- loading -->
-        <ai-message v-if="isLoading" :is-loading="true" />
+        <!-- <ai-message v-if="isLoading" :is-loading="true" /> -->
       </div>
     </section>
     <section class="py-4 shrink-0 space-y-3">
