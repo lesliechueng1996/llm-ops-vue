@@ -14,7 +14,7 @@ const messages = ref<Message[]>([]) // 聊天消息列表
 const query = ref<string>('') // 输入框内容
 const isLoading = ref(false) // 是否正在加载
 const route = useRoute()
-const messageWrap = useTemplateRef('messages-wrap')
+const messageWrap = useTemplateRef<HTMLDivElement>('messages-wrap')
 
 const scrollMessageToBottom = () => {
   if (!messageWrap.value) {
@@ -61,7 +61,7 @@ const sendMessage = async () => {
         const lastMessage = messages.value[messages.value.length - 1]
 
         if (event === 'agent_message') {
-          messages.value[messages.value.length - 1].content = lastMessage.content + data.data
+          messages.value[messages.value.length - 1].content = lastMessage.content + data.answer
         }
       }
     }

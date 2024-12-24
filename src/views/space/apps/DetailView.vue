@@ -1,18 +1,5 @@
 <script setup lang="ts">
 import ViewAndDebug from '@/components/space/app/ViewAndDebug.vue'
-import { ssePost } from '@/utils/request'
-
-const test = async () => {
-  const result = ssePost('/apps/8cc4a6de-b375-4a99-b9c8-c19ceefaf758/debug', {
-    body: {
-      query: '你好，你是谁？',
-    },
-  })
-
-  for await (const data of result) {
-    console.log(data)
-  }
-}
 </script>
 
 <template>
@@ -24,10 +11,7 @@ const test = async () => {
         <header class="w-full h-16 border-b-[1px] border-gray-200 shrink-0">应用编排</header>
         <div class="w-full flex flex-1">
           <section class="w-1/2">人设与回复逻辑</section>
-          <section class="w-1/2">
-            应用能力
-            <button @click="test">123</button>
-          </section>
+          <section class="w-1/2">应用能力</section>
         </div>
       </div>
       <div class="w-1/3 h-full">
