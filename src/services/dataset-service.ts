@@ -1,6 +1,11 @@
 import type { BaseResponse, BasePaginationReq } from '@/models/base'
-import type { CreateDatasetRequest, GetDatasetPaginationResponse } from '@/models/dataset-model'
-import { get, post } from '@/utils/request'
+import type {
+  CreateDatasetRequest,
+  GetDatasetPaginationResponse,
+  updateDatasetRequest,
+  GetDatasetResponse,
+} from '@/models/dataset-model'
+import { get, put, post } from '@/utils/request'
 
 export const createDataset = async (dataset: CreateDatasetRequest) => {
   return post<BaseResponse<unknown>>('/datasets', {
@@ -20,4 +25,14 @@ export const getDatasetsByPagination = async ({
       search_word,
     },
   })
+}
+
+export const updateDataset = async (id: string, dataset: updateDatasetRequest) => {
+  return put<BaseResponse<unknown>>(`/datasets/${id}`, {
+    body: dataset,
+  })
+}
+
+export const getDataset = async (id: string) => {
+  return get<BaseResponse<GetDatasetResponse>>(`/datasets/${id}`)
 }

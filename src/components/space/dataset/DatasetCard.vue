@@ -5,12 +5,21 @@ import { type GetDatasetPaginationResponse } from '@/models/dataset-model'
 
 type Dataset = GetDatasetPaginationResponse['data']['list'][0]
 
-defineProps<{
+const { dataset } = defineProps<{
   dataset: Dataset
 }>()
 
+const emit = defineEmits<{
+  (e: 'editDataset', id: string): void
+  (e: 'deleteDataset', id: string): void
+}>()
+
 const handleSelect = (key: string | number | Record<string, unknown> | undefined) => {
-  console.log(key)
+  if (key === 'edit') {
+    emit('editDataset', dataset.id)
+  } else if (key === 'delete') {
+    emit('deleteDataset', dataset.id)
+  }
 }
 </script>
 

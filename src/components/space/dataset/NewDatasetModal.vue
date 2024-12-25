@@ -31,6 +31,7 @@ const handleSubmit = async (form: FormData) => {
       description: '',
     }"
     @submit="handleSubmit"
+    @cancel="emit('cancel')"
   />
 </template>
 
