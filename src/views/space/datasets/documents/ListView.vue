@@ -61,6 +61,7 @@ const handleSelect = (key: string | number | Record<string, unknown> | undefined
         total: pagination.totalRecord,
         pageSize: pagination.pageSize,
         current: pagination.currentPage,
+        showTotal: true,
       }"
       @page-change="pageChangeHandler"
     >
