@@ -5,7 +5,7 @@ import type {
   updateDatasetRequest,
   GetDatasetResponse,
 } from '@/models/dataset-model'
-import { get, put, post } from '@/utils/request'
+import { get, put, post, del } from '@/utils/request'
 
 export const createDataset = async (dataset: CreateDatasetRequest) => {
   return post<BaseResponse<unknown>>('/datasets', {
@@ -35,4 +35,8 @@ export const updateDataset = async (id: string, dataset: updateDatasetRequest) =
 
 export const getDataset = async (id: string) => {
   return get<BaseResponse<GetDatasetResponse>>(`/datasets/${id}`)
+}
+
+export const deleteDataset = async (id: string) => {
+  return del<BaseResponse<unknown>>(`/datasets/${id}`)
 }
