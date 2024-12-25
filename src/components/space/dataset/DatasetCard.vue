@@ -30,7 +30,11 @@ const handleSelect = (key: string | number | Record<string, unknown> | undefined
     :updated-at="dataset.updated_at"
   >
     <template #header>
-      <common-card-header :label="dataset.name" :icon="dataset.icon">
+      <common-card-header
+        :label="dataset.name"
+        :icon="dataset.icon"
+        :href="`/space/datasets/${dataset.id}/documents`"
+      >
         <template #name>
           <p>
             {{ dataset.document_count }} 文档 ·

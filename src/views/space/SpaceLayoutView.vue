@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import CommonHeader from '@/components/CommonHeader.vue'
-import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import SearchInput from '@/components/SearchInput.vue'
 
 const route = useRoute()
 
@@ -23,22 +24,6 @@ const handleHeaderBtnClick = () => {
 const tipText = computed(() => {
   const path = route.path
   return pathTipMap[path] || ''
-})
-
-const searchWord = ref('')
-const router = useRouter()
-
-const commitSearch = (event: FocusEvent | KeyboardEvent) => {
-  const target = event.target as HTMLInputElement
-  target.blur()
-  router.push({ query: { search: searchWord.value } })
-}
-
-onMounted(() => {
-  const search = route.query.search
-  if (search) {
-    searchWord.value = search as string
-  }
 })
 </script>
 
@@ -68,18 +53,7 @@ onMounted(() => {
           >{{ pathTipMap[path] }}</router-link
         >
       </div>
-      <a-input
-        class="w-52 rounded-lg bg-white border border-gray-200"
-        :placeholder="`请输入${tipText}名称`"
-        allow-clear
-        v-model="searchWord"
-        @press-enter="commitSearch"
-        @blur="commitSearch"
-      >
-        <template #prefix>
-          <icon-search />
-        </template>
-      </a-input>
+      <search-input :placeholder="`请输入${tipText}名称`" />
     </div>
 
     <router-view :create-type="createType" @cancel-modal="clearCreateType" />

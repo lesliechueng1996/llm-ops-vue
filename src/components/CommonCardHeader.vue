@@ -3,9 +3,10 @@ export type CardHeader = {
   label: string
   icon: string
   background?: string
+  href?: string
 }
 
-const { label, icon, background = '#FFF' } = defineProps<CardHeader>()
+const { label, icon, background = '#FFF', href } = defineProps<CardHeader>()
 </script>
 
 <template>
@@ -17,7 +18,10 @@ const { label, icon, background = '#FFF' } = defineProps<CardHeader>()
       :style="{ backgroundColor: background }"
     ></a-avatar>
     <div class="grow">
-      <p class="text-gray-700 font-bold text-base">{{ label }}</p>
+      <p v-if="!href" class="text-gray-700 font-bold text-base">{{ label }}</p>
+      <router-link :to="href" v-else class="text-gray-700 font-bold text-base">{{
+        label
+      }}</router-link>
       <p class="text-gray-500 text-xs">
         <slot name="name" />
       </p>

@@ -61,6 +61,11 @@ const router = createRouter({
           name: 'open-index',
           component: () => import('@/views/open/IndexView.vue'),
         },
+        {
+          path: 'space/datasets/:datasetId/documents',
+          name: 'space-datasets-documents-list',
+          component: () => import('@/views/space/datasets/documents/ListView.vue'),
+        },
       ],
     },
     {
