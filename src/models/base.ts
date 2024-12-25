@@ -13,3 +13,9 @@ export type BasePaginationResponse<T> = BaseResponse<{
     page_size: number
   }
 }>
+
+export type BasePaginationReq = {
+  current_page: number
+  page_size: number
+  search_word?: string
+}
