@@ -6,19 +6,19 @@ import {
   type UpdateApiToolRequest,
   type ValidateOpenapiSchemaResponse,
 } from '@/models/api-tool'
-import type { BaseResponse } from '@/models/base'
+import type { BasePaginationReq, BaseResponse } from '@/models/base'
 import { get, post, put, del } from '@/utils/request'
 
-export const getApiToolProvidersWithPage = async (
-  searchWord: string = '',
-  page: number = 0,
-  pageSize: number = 20,
-) => {
+export const getApiToolProvidersWithPage = async ({
+  current_page,
+  page_size,
+  search_word = '',
+}: BasePaginationReq) => {
   return get<GetApiToolProvidersWithPageResponse>('/api-tools', {
     params: {
-      search_word: searchWord,
-      current_page: page,
-      page_size: pageSize,
+      search_word,
+      current_page,
+      page_size,
     },
   })
 }
