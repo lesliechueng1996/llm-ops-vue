@@ -23,7 +23,7 @@ const pagination = reactive({ ...initPagination })
 const selectedProvider = ref<(Provider & { id: string }) | null>(null)
 const route = useRoute()
 
-const loadMore = useTemplateRef('load-more')
+const loadMore = useTemplateRef<HTMLDivElement>('load-more')
 let observer: IntersectionObserver | null = null
 
 const editProviderId = ref<string | null>(null)
@@ -154,7 +154,7 @@ const handleModalCancel = () => {
       :canEdit="true"
       @edit="editProviderId = $event"
     />
-    <new-tool-modal :visible="createType === '插件'" @cancel="handleModalCancel" />
+    <new-tool-modal :visible="createType === '自定义插件'" @cancel="handleModalCancel" />
     <edit-tool-modal
       v-if="editProviderId"
       :provider-id="editProviderId"

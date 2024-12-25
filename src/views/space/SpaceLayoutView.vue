@@ -7,7 +7,7 @@ const route = useRoute()
 
 const pathTipMap: Record<string, string> = {
   '/space/apps': 'AI应用',
-  '/space/tools': '插件',
+  '/space/tools': '自定义插件',
   '/space/workflows': '工作流',
   '/space/datasets': '知识库',
 }
@@ -48,7 +48,7 @@ onMounted(() => {
     <common-header
       class="shrink-0"
       title="个人空间"
-      :btn-text="`创建自定义${tipText}`"
+      :btn-text="`创建${tipText}`"
       @click-btn="handleHeaderBtnClick"
     >
       <template #icon>
