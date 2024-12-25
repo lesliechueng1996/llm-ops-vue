@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CommonCardHeader from './CommonCardHeader.vue'
 import { API_PREFIX } from '@/config'
 import type { Tool } from './ToolCard.vue'
 
@@ -16,24 +17,17 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex items-center gap-3">
-    <a-avatar
-      class="w-10 h-10"
-      shape="square"
-      :imageUrl="
-        provider.icon?.startsWith('http')
-          ? provider.icon
-          : `${API_PREFIX}/builtin-tools/${provider.name}/icon`
-      "
-      :style="{ backgroundColor: provider.background }"
-    ></a-avatar>
-    <div>
-      <p class="text-gray-700 font-bold text-base">{{ provider.label }}</p>
-      <p class="text-gray-500 text-xs">
-        提供商 {{ provider.name }} · {{ provider.tools.length }} 插件
-      </p>
-    </div>
-  </div>
+  <common-card-header
+    :label="provider.label"
+    :icon="
+      provider.icon?.startsWith('http')
+        ? provider.icon
+        : `${API_PREFIX}/builtin-tools/${provider.name}/icon`
+    "
+    :background="provider.background || '#fff'"
+  >
+    <template #name> 提供商 {{ provider.name }} · {{ provider.tools.length }} 插件 </template>
+  </common-card-header>
 </template>
 
 <style scoped></style>
