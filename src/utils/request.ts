@@ -93,8 +93,14 @@ type ServerEvent = {
   event: string
   data: {
     id: string
+    task_id: string
     event: string
-    data: unknown
+    thought: string
+    observation: string
+    tool: string
+    tool_input: string
+    answer: string
+    latency: number
   }
 }
 
