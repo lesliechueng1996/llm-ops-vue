@@ -14,6 +14,7 @@ const initialData = {
   name: '',
   description: '',
   openapiSchema: '',
+  icon: '',
   headers: [
     {
       label: '',
@@ -25,7 +26,7 @@ const initialData = {
 const handleSubmit = async (form: FormData) => {
   await createApiTools({
     name: form.name,
-    icon: 'https://cn.vuejs.org/viteconf.svg',
+    icon: form.icon,
     description: form.description,
     openapi_schema: form.openapiSchema,
     headers: form.headers.map((header) => ({

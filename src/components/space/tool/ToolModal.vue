@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import { Message, Modal } from '@arco-design/web-vue'
+import { Message, Modal, type FileItem } from '@arco-design/web-vue'
 import { validateOpenapiSchema } from '@/services/api-tool'
+import { uploadImage } from '@/services/upload-file-service'
+import { nanoid } from 'nanoid'
 
 export type FormData = {
   name: string
   description: string
   openapiSchema: string
   headers: { label: string; value: string }[]
+  icon: string
 }
 
 const {
@@ -30,7 +33,16 @@ const emit = defineEmits<{
 
 const formRef = ref()
 const form = reactive<FormData>(initialData)
+const okLoading = ref(false)
+const fileList = ref<FileItem[]>([])
 
+if (initialData.icon) {
+  fileList.value.push({
+    uid: nanoid(),
+    name: 'icon',
+    url: initialData.icon,
+  })
+}
 const toolColumns = [
   {
     title: '名称',
@@ -78,6 +90,7 @@ const headerColumns = [
 
 const handleSubmit = async () => {
   try {
+    okLoading.value = true
     const errors = await formRef.value.validate()
     if (errors) {
       return
@@ -86,9 +99,23 @@ const handleSubmit = async () => {
       return
     }
 
+    if (fileList.value.length === 0) {
+      Message.error('请上传插件图标')
+      return
+    }
+    const file = fileList.value[0].file
+    if (!file) {
+      Message.error('请上传插件图标')
+      return
+    }
+    const res = await uploadImage(file)
+    form.icon = res.data.image_url
+
     emit('submit', form)
   } catch {
     Message.error('创建插件失败')
+  } finally {
+    okLoading.value = false
   }
 }
 
@@ -205,7 +232,9 @@ const handleDelete = () => {
         </div>
         <div class="space-x-2">
           <a-button @click="emit('cancel')" class="rounded-lg">取消</a-button>
-          <a-button type="primary" @click="handleSubmit" class="rounded-lg">保存</a-button>
+          <a-button type="primary" @click="handleSubmit" class="rounded-lg" :loading="okLoading"
+            >保存</a-button
+          >
         </div>
       </div>
     </template>
@@ -217,6 +246,11 @@ const handleDelete = () => {
             list-type="picture-card"
             action="/"
             image-preview
+            :auto-upload="false"
+            :limit="1"
+            :show-retry-button="false"
+            :default-file-list="fileList"
+            @change="fileList = $event"
           />
         </a-form-item>
         <a-form-item field="name" label="插件名称" required>

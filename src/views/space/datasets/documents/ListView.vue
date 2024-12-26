@@ -8,7 +8,8 @@ import RenameModal from '@/components/space/dataset/document/RenameModal.vue'
 import { ref } from 'vue'
 
 const { dataset, datasetId, reloadDataset } = useDataset()
-const { data, changeEnabledHandler, pagination, pageChangeHandler, reloadData } = useDocuments()
+const { data, changeEnabledHandler, pagination, pageChangeHandler, reloadData, enabledLoadingMap } =
+  useDocuments()
 
 type Document = (typeof data.value)[0]
 
@@ -141,6 +142,7 @@ const getStatusMessage = (status: string, error: string) => {
                 type="round"
                 :default-checked="record.enabled"
                 @change="(value) => changeEnabledHandler(record.id, value as boolean)"
+                :loading="enabledLoadingMap[record.id]"
               />
               <a-divider direction="vertical" />
               <a-dropdown @select="handleSelect">

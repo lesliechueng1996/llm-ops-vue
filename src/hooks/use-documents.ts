@@ -1,8 +1,9 @@
 import { useRoute } from 'vue-router'
 import { getDataset } from '@/services/dataset-service'
-import { getDocumentPagination } from '@/services/document-service'
+import { getDocumentPagination, updateDocumentEnabled } from '@/services/document-service'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { initPagination } from '@/config'
+import { Message } from '@arco-design/web-vue'
 
 type Dataset = Awaited<ReturnType<typeof getDataset>>['data']
 type Document = Awaited<ReturnType<typeof getDocumentPagination>>['data']['list'][0]
@@ -36,6 +37,8 @@ export const useDocuments = () => {
 
   const data = ref<Document[]>([])
   const pagination = reactive({ ...initPagination })
+
+  const enabledLoadingMap = ref<Record<string, boolean>>({})
 
   const loadData = async () => {
     try {
@@ -75,8 +78,17 @@ export const useDocuments = () => {
     await loadData()
   })
 
-  const changeEnabledHandler = async (id: string, value: boolean) => {
-    console.log(id, value)
+  const changeEnabledHandler = async (id: string, enabled: boolean) => {
+    try {
+      enabledLoadingMap.value[id] = true
+      await updateDocumentEnabled(datasetId, id, enabled)
+      await loadData()
+      Message.success(`${enabled ? '启用' : '禁用'}成功`)
+    } catch {
+      Message.error(`${enabled ? '启用' : '禁用'}失败`)
+    } finally {
+      enabledLoadingMap.value[id] = false
+    }
   }
 
   const pageChangeHandler = async (page: number) => {
@@ -95,5 +107,6 @@ export const useDocuments = () => {
     pageChangeHandler,
     pagination,
     reloadData,
+    enabledLoadingMap,
   }
 }

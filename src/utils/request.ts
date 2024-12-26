@@ -152,3 +152,78 @@ export const ssePost = async function* (url: string, fetchOptions: FetchOptions)
     }
   }
 }
+
+interface UploadOptions {
+  onProgress?: (progress: number) => void
+  headers?: Record<string, string>
+}
+
+export const upload = <T extends BaseResponse<unknown>>(
+  url: string,
+  file: File,
+  options: UploadOptions,
+): Promise<T> => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    const formData = new FormData()
+
+    // 添加文件到FormData
+    formData.append('file', file)
+
+    // 处理上传进度
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable && options.onProgress) {
+        const progress = (e.loaded / e.total) * 100
+        options.onProgress(progress)
+      }
+    })
+
+    // 处理请求完成
+    xhr.addEventListener('load', () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const response = JSON.parse(xhr.responseText) as BaseResponse<unknown>
+          if (response.code !== httpCode.success) {
+            Message.error(response.message)
+            reject(response)
+            return
+          }
+          resolve(response as T)
+        } catch (e) {
+          console.error(e)
+          Message.error('解析响应失败')
+          reject(new Error('解析响应失败'))
+        }
+      } else {
+        Message.error('上传失败')
+        reject(new Error('上传失败'))
+      }
+    })
+
+    // 处理错误
+    xhr.addEventListener('error', () => {
+      Message.error('上传失败')
+      reject(new Error('上传失败'))
+    })
+
+    // 处理终止
+    xhr.addEventListener('abort', () => {
+      Message.error('上传已取消')
+      reject(new Error('上传已取消'))
+    })
+
+    // 发送请求
+    const urlWithPrefix = `${API_PREFIX}${url.startsWith('/') ? url : `/${url}`}`
+    xhr.open('POST', urlWithPrefix, true)
+
+    // 设置请求头
+    if (options.headers) {
+      Object.entries(options.headers).forEach(([key, value]) => {
+        xhr.setRequestHeader(key, value)
+      })
+    }
+
+    xhr.withCredentials = true
+    xhr.send(formData)
+  })
+}

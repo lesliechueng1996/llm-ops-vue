@@ -26,3 +26,11 @@ export const renameDocument = (datasetId: string, documentId: string, name: stri
     },
   })
 }
+
+export const updateDocumentEnabled = (datasetId: string, documentId: string, enabled: boolean) => {
+  return put<BaseResponse<unknown>>(`/datasets/${datasetId}/documents/${documentId}/enabled`, {
+    body: {
+      enabled,
+    },
+  })
+}

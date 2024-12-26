@@ -16,7 +16,7 @@ const initialData = ref<FormData | null>(null)
 const handleSubmit = async (form: FormData) => {
   await updateApiTool(providerId, {
     name: form.name,
-    icon: 'https://cn.vuejs.org/viteconf.svg',
+    icon: form.icon,
     description: form.description,
     openapi_schema: form.openapiSchema,
     headers: form.headers.map((header) => ({
@@ -32,6 +32,7 @@ onMounted(async () => {
   const provider = await getApiTool(providerId)
   initialData.value = {
     name: provider.data.name,
+    icon: provider.data.icon,
     description: provider.data.description,
     openapiSchema: provider.data.openapi_schema,
     headers: provider.data.headers.map((header) => ({

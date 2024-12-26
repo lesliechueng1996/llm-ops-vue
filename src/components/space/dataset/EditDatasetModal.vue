@@ -16,7 +16,7 @@ const initialData = ref<FormData | null>(null)
 const handleSubmit = async (form: FormData) => {
   await updateDataset(id, {
     name: form.name,
-    icon: 'https://picsum.photos/200/200',
+    icon: form.icon,
     description: form.description,
   })
 

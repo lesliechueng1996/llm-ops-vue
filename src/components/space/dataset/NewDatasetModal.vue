@@ -13,7 +13,7 @@ const emit = defineEmits<{
 const handleSubmit = async (form: FormData) => {
   await createDataset({
     name: form.name,
-    icon: 'https://picsum.photos/200/200',
+    icon: form.icon,
     description: form.description,
   })
 
