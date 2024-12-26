@@ -6,6 +6,7 @@ import { Modal, Message } from '@arco-design/web-vue'
 import { deleteDocument } from '@/services/document-service'
 import RenameModal from '@/components/space/dataset/document/RenameModal.vue'
 import { ref } from 'vue'
+import HitTestingModal from '@/components/space/dataset/document/HitTestingModal.vue'
 
 const { dataset, datasetId, reloadDataset } = useDataset()
 const { data, changeEnabledHandler, pagination, pageChangeHandler, reloadData, enabledLoadingMap } =
@@ -19,6 +20,7 @@ interface DropdownValue {
 }
 
 const currentDocument = ref<Document | null>(null)
+const showHitTestingModal = ref(false)
 
 const handleSelect = (value: string | number | Record<string, unknown> | undefined) => {
   const data = value as unknown as DropdownValue
@@ -94,7 +96,10 @@ const getStatusMessage = (status: string, error: string) => {
     <div class="flex items-center justify-between">
       <search-input placeholder="输入关键词搜索文档" />
       <div class="space-x-3">
-        <a-button class="rounded-lg font-bold text-sm text-gray-700" type="secondary"
+        <a-button
+          class="rounded-lg font-bold text-sm text-gray-700"
+          type="secondary"
+          @click="showHitTestingModal = true"
           >召回测试</a-button
         >
         <a-button class="rounded-lg font-bold text-sm text-white" type="primary">添加文件</a-button>
@@ -177,6 +182,8 @@ const getStatusMessage = (status: string, error: string) => {
       "
       @close="currentDocument = null"
     />
+
+    <hit-testing-modal v-model:visible="showHitTestingModal" />
   </div>
 </template>
 

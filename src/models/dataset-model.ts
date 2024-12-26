@@ -1,4 +1,4 @@
-import type { BasePaginationResponse } from './base'
+import type { BasePaginationResponse, BaseResponse } from './base'
 
 export type CreateDatasetRequest = {
   name: string
@@ -36,3 +36,48 @@ export type GetDatasetResponse = {
   updated_at: number
   created_at: number
 }
+
+export type HitTestingStrategy = 'hybrid' | 'semantic' | 'full_text'
+
+export type HitTestingRequest = {
+  query: string
+  retrieval_strategy: HitTestingStrategy
+  k: number
+  score: number
+}
+
+export type HitTestingResponse = BaseResponse<
+  {
+    id: string
+    document: {
+      id: string
+      name: string
+      extension: string
+      mime_type: string
+    }
+    dataset_id: string
+    position: number
+    score: number
+    content: string
+    keywords: string[]
+    character_count: number
+    token_count: number
+    hit_count: number
+    enabled: boolean
+    disabled_at: number
+    status: string
+    error: string
+    updated_at: number
+    created_at: number
+  }[]
+>
+
+export type DatasetRecentQueryResponse = BaseResponse<
+  {
+    id: string
+    dataset_id: string
+    query: string
+    source: string
+    created_at: number
+  }[]
+>

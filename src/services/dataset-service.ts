@@ -4,6 +4,9 @@ import type {
   GetDatasetPaginationResponse,
   updateDatasetRequest,
   GetDatasetResponse,
+  HitTestingRequest,
+  HitTestingResponse,
+  DatasetRecentQueryResponse,
 } from '@/models/dataset-model'
 import { get, put, post, del } from '@/utils/request'
 
@@ -39,4 +42,14 @@ export const getDataset = async (id: string) => {
 
 export const deleteDataset = async (id: string) => {
   return del<BaseResponse<unknown>>(`/datasets/${id}`)
+}
+
+export const hitTesting = async (datasetId: string, request: HitTestingRequest) => {
+  return post<HitTestingResponse>(`/datasets/${datasetId}/hit`, {
+    body: request,
+  })
+}
+
+export const getDatasetRecentQuery = async (datasetId: string) => {
+  return get<DatasetRecentQueryResponse>(`/datasets/${datasetId}/queries`)
 }
