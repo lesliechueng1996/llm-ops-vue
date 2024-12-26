@@ -1,6 +1,6 @@
 import { type GetDocumentPaginationResponse } from '@/models/document-model'
-import { type BasePaginationReq } from '@/models/base'
-import { get } from '@/utils/request'
+import { type BasePaginationReq, type BaseResponse } from '@/models/base'
+import { get, del, put } from '@/utils/request'
 
 export const getDocumentPagination = async (
   datasetId: string,
@@ -11,6 +11,18 @@ export const getDocumentPagination = async (
       current_page,
       page_size,
       search_word,
+    },
+  })
+}
+
+export const deleteDocument = (datasetId: string, documentId: string) => {
+  return del(`/datasets/${datasetId}/documents/${documentId}`)
+}
+
+export const renameDocument = (datasetId: string, documentId: string, name: string) => {
+  return put<BaseResponse<unknown>>(`/datasets/${datasetId}/documents/${documentId}/name`, {
+    body: {
+      name,
     },
   })
 }

@@ -14,12 +14,18 @@ export const useDataset = () => {
   const dataset = ref<Dataset | null>(null)
 
   onMounted(async () => {
+    await reloadDataset()
+  })
+
+  const reloadDataset = async () => {
     const res = await getDataset(datasetId)
     dataset.value = res.data
-  })
+  }
 
   return {
     dataset,
+    datasetId,
+    reloadDataset,
   }
 }
 
@@ -78,10 +84,16 @@ export const useDocuments = () => {
     await loadData()
   }
 
+  const reloadData = async () => {
+    resetPagination()
+    await loadData()
+  }
+
   return {
     data,
     changeEnabledHandler,
     pageChangeHandler,
     pagination,
+    reloadData,
   }
 }

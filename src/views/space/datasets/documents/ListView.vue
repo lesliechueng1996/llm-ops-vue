@@ -2,16 +2,61 @@
 import { useDataset, useDocuments } from '@/hooks/use-documents'
 import SearchInput from '@/components/SearchInput.vue'
 import { format } from 'date-fns'
+import { Modal, Message } from '@arco-design/web-vue'
+import { deleteDocument } from '@/services/document-service'
+import RenameModal from '@/components/space/dataset/document/RenameModal.vue'
+import { ref } from 'vue'
 
-const { dataset } = useDataset()
-const { data, changeEnabledHandler, pagination, pageChangeHandler } = useDocuments()
+const { dataset, datasetId, reloadDataset } = useDataset()
+const { data, changeEnabledHandler, pagination, pageChangeHandler, reloadData } = useDocuments()
 
-const handleSelect = (key: string | number | Record<string, unknown> | undefined) => {
-  if (key === 'rename') {
-    console.log('rename')
-  } else if (key === 'delete') {
-    console.log('delete')
+type Document = (typeof data.value)[0]
+
+interface DropdownValue {
+  type: 'rename' | 'delete'
+  record: Document
+}
+
+const currentDocument = ref<Document | null>(null)
+
+const handleSelect = (value: string | number | Record<string, unknown> | undefined) => {
+  const data = value as unknown as DropdownValue
+  if (data.type === 'rename') {
+    currentDocument.value = data.record
+  } else if (data.type === 'delete') {
+    Modal.warning({
+      title: '要删除该文档吗？',
+      content:
+        '删除文档后，知识库/向量数据库将无法检索到该文档，如需暂时关闭该文档的检索，可以选择禁用功能。',
+      okText: '确认删除',
+      cancelText: '取消',
+      async onOk() {
+        try {
+          await deleteDocument(datasetId, data.record.id)
+          Message.success('删除成功')
+        } catch {
+          Message.error('删除失败')
+        }
+
+        await reloadDataset()
+        await reloadData()
+      },
+    })
   }
+}
+
+const getStatusMessage = (status: string, error: string) => {
+  const statusMap: Record<string, string> = {
+    waiting: '等待中',
+    parsing: '解析处理中',
+    splitting: '分割中',
+    indexing: '构建索引中',
+    completed: '构建完成',
+    error: '出错',
+  }
+
+  const baseMessage = statusMap[status] || '未知状态'
+  return error ? `${baseMessage} (${error})` : baseMessage
 }
 </script>
 
@@ -79,12 +124,14 @@ const handleSelect = (key: string | number | Record<string, unknown> | undefined
         </a-table-column>
         <a-table-column title="状态" dataIndex="enabled">
           <template #cell="{ record }">
-            <div class="flex items-center gap-2">
-              <div
-                :class="`size-2 ${record.enabled ? 'bg-green-500' : 'bg-gray-300'} rounded-[3px]`"
-              ></div>
-              <p>{{ record.enabled ? '可用' : '已禁用' }}</p>
-            </div>
+            <a-tooltip :content="getStatusMessage(record.status, record.error)">
+              <div class="flex items-center gap-2 w-fit">
+                <div
+                  :class="`size-2 ${record.enabled ? 'bg-green-500' : 'bg-gray-300'} rounded-[3px]`"
+                ></div>
+                <p>{{ record.enabled ? '可用' : '已禁用' }}</p>
+              </div>
+            </a-tooltip>
           </template>
         </a-table-column>
         <a-table-column title="操作">
@@ -103,8 +150,10 @@ const handleSelect = (key: string | number | Record<string, unknown> | undefined
                   </template>
                 </a-button>
                 <template #content>
-                  <a-doption value="rename">重命名</a-doption>
-                  <a-doption class="text-red-700" value="delete">删除</a-doption>
+                  <a-doption :value="{ type: 'rename', record }">重命名</a-doption>
+                  <a-doption class="text-red-700" :value="{ type: 'delete', record }"
+                    >删除</a-doption
+                  >
                 </template>
               </a-dropdown>
             </div>
@@ -112,6 +161,20 @@ const handleSelect = (key: string | number | Record<string, unknown> | undefined
         </a-table-column>
       </template>
     </a-table>
+
+    <rename-modal
+      v-if="currentDocument"
+      :document-id="currentDocument.id"
+      :original-name="currentDocument.name"
+      :dataset-id="datasetId"
+      @success="
+        () => {
+          currentDocument = null
+          reloadData()
+        }
+      "
+      @close="currentDocument = null"
+    />
   </div>
 </template>
 
