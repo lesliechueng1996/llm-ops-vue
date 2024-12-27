@@ -2,13 +2,17 @@
 import { useDataset, useDocuments } from '@/hooks/use-documents'
 import SearchInput from '@/components/SearchInput.vue'
 import { format } from 'date-fns'
-import { Modal, Message } from '@arco-design/web-vue'
+import { Modal, Message, type TableData } from '@arco-design/web-vue'
 import { deleteDocument } from '@/services/document-service'
 import RenameModal from '@/components/space/dataset/document/RenameModal.vue'
 import { ref } from 'vue'
 import HitTestingModal from '@/components/space/dataset/document/HitTestingModal.vue'
+import TagHeader from '@/components/space/dataset/document/TagHeader.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const { dataset, datasetId, reloadDataset } = useDataset()
+
 const { data, changeEnabledHandler, pagination, pageChangeHandler, reloadData, enabledLoadingMap } =
   useDocuments()
 
@@ -61,36 +65,31 @@ const getStatusMessage = (status: string, error: string) => {
   const baseMessage = statusMap[status] || '未知状态'
   return error ? `${baseMessage} (${error})` : baseMessage
 }
+
+const handleRowClick = (record: TableData) => {
+  router.push(`/space/datasets/${datasetId}/documents/${record.id}/segments`)
+}
 </script>
 
 <template>
   <div class="p-6 flex flex-col gap-6">
     <!-- Header -->
-    <div class="flex items-center justify-start gap-3 shrink-0">
-      <router-link to="/space/datasets">
-        <icon-left size="16" />
-      </router-link>
-      <a-avatar :size="40" shape="square">
-        <img alt="avatar" :src="dataset?.icon" />
-      </a-avatar>
-      <div class="flex flex-col justify-center">
-        <a-breadcrumb>
-          <a-breadcrumb-item>知识库</a-breadcrumb-item>
-          <a-breadcrumb-item>{{ dataset?.name }}</a-breadcrumb-item>
-        </a-breadcrumb>
-        <div class="space-x-2">
-          <a-tag class="bg-gray-200 text-gray-500 text-xs rounded-lg"
-            >{{ dataset?.document_count }} 文档</a-tag
-          >
-          <a-tag class="bg-gray-200 text-gray-500 text-xs rounded-lg"
-            >{{ dataset?.hit_count }} 命中</a-tag
-          >
-          <a-tag class="bg-gray-200 text-gray-500 text-xs rounded-lg"
-            >{{ dataset?.related_app_count }} 关联应用</a-tag
-          >
-        </div>
-      </div>
-    </div>
+    <tag-header
+      label="知识库"
+      :title="dataset?.name || ''"
+      :tags="[
+        `${dataset?.document_count} 文档`,
+        `${dataset?.hit_count} 命中`,
+        `${dataset?.related_app_count} 关联应用`,
+      ]"
+      :back-url="`/space/datasets`"
+    >
+      <template #icon>
+        <a-avatar :size="40" shape="square">
+          <img alt="avatar" :src="dataset?.icon" />
+        </a-avatar>
+      </template>
+    </tag-header>
 
     <!-- Action -->
     <div class="flex items-center justify-between">
@@ -118,6 +117,8 @@ const getStatusMessage = (status: string, error: string) => {
         current: pagination.currentPage,
         showTotal: true,
       }"
+      row-class="cursor-pointer"
+      @row-click="handleRowClick"
       @page-change="pageChangeHandler"
     >
       <template #columns>
@@ -129,7 +130,7 @@ const getStatusMessage = (status: string, error: string) => {
         <a-table-column title="召回次数" dataIndex="hit_count"></a-table-column>
         <a-table-column title="上传时间" dataIndex="created_at">
           <template #cell="{ record }">
-            {{ format(new Date(record.created_at * 1000), 'yyyy-MM-dd hh:mm:ss') }}
+            {{ format(new Date(record.created_at * 1000), 'yyyy-MM-dd HH:mm:ss') }}
           </template>
         </a-table-column>
         <a-table-column title="状态" dataIndex="enabled">
@@ -146,7 +147,7 @@ const getStatusMessage = (status: string, error: string) => {
         </a-table-column>
         <a-table-column title="操作">
           <template #cell="{ record }">
-            <div class="flex items-center">
+            <div class="flex items-center" @click.stop>
               <a-switch
                 type="round"
                 :default-checked="record.enabled"

@@ -18,7 +18,7 @@ const visible = ref(false)
     @click="visible = true"
   >
     <div class="flex items-center justify-between gap-1 mb-3">
-      <icon-send size="14" />
+      <icon-send size="14" class="-rotate-45" />
       <a-progress :percent="hitDoc.score" :show-text="false" color="#CCCCCC" size="medium" />
       <p class="text-xs font-bold text-gray-500">{{ hitDoc.score.toFixed(2) }}</p>
     </div>

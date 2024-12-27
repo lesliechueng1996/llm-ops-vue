@@ -60,3 +60,19 @@ export type CreateDocumentsResponse = BaseResponse<{
     created_at: number
   }[]
 }>
+
+export type GetDocumentResponse = BaseResponse<{
+  id: string
+  dataset_id: string
+  name: string
+  segment_count: number
+  character_count: number
+  hit_count: number
+  position: number
+  enabled: boolean
+  disabled_at: number
+  status: string
+  error: string
+  updated_at: number
+  created_at: number
+}>

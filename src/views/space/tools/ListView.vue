@@ -6,7 +6,6 @@ import ToolProviderDrawer, { type Provider } from '@/components/ToolProviderDraw
 import NewToolModal from '@/components/space/tool/NewToolModal.vue'
 import EditToolModal from '@/components/space/tool/EditToolModal.vue'
 import { usePagination } from '@/hooks/use-pagination'
-import LoadMore from '@/components/LoadMore.vue'
 
 defineProps<{
   createType: string | null
@@ -56,7 +55,13 @@ const handleModalCancel = () => {
           @click="selectedProvider = provider"
         />
       </div>
-      <load-more :needShowLoadMore="needShowLoadMore" />
+      <div class="flex justify-center items-center my-4 text-gray-500 text-sm">
+        <span ref="load-more" v-if="needShowLoadMore">
+          <icon-loading />
+          加载中
+        </span>
+        <span v-else>数据加载完成</span>
+      </div>
     </a-spin>
 
     <tool-provider-drawer

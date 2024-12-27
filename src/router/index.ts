@@ -68,8 +68,13 @@ const router = createRouter({
         },
         {
           path: 'space/datasets/:datasetId/documents/create',
-          name: 'space-datasets-documents-create', // 修改这里的路由名称
+          name: 'space-datasets-documents-create',
           component: () => import('@/views/space/datasets/documents/CreateView.vue'),
+        },
+        {
+          path: 'space/datasets/:datasetId/documents/:documentId/segments',
+          name: 'space-datasets-documents-segments',
+          component: () => import('@/views/space/datasets/documents/segments/ListView.vue'),
         },
       ],
     },

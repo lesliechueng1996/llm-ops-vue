@@ -3,6 +3,7 @@ import {
   type CreateDocumentsResponse,
   type GetDocumentBatchResponse,
   type GetDocumentPaginationResponse,
+  type GetDocumentResponse,
 } from '@/models/document-model'
 import { type BasePaginationReq, type BaseResponse } from '@/models/base'
 import { get, del, put, post } from '@/utils/request'
@@ -48,4 +49,8 @@ export const createDocuments = (datasetId: string, data: CreateDocumentsRequest)
   return post<CreateDocumentsResponse>(`/datasets/${datasetId}/documents`, {
     body: data,
   })
+}
+
+export const getDocument = (datasetId: string, documentId: string) => {
+  return get<GetDocumentResponse>(`/datasets/${datasetId}/documents/${documentId}`)
 }

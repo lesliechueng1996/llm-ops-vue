@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import NewDatasetModal from '@/components/space/dataset/NewDatasetModal.vue'
 import { usePagination } from '@/hooks/use-pagination'
-import LoadMore from '@/components/LoadMore.vue'
 import { deleteDataset, getDatasetsByPagination } from '@/services/dataset-service'
 import DatasetCard from '@/components/space/dataset/DatasetCard.vue'
 import EditDatasetModal from '@/components/space/dataset/EditDatasetModal.vue'
@@ -52,7 +51,13 @@ const handleDelete = (id: string) => {
           @delete-dataset="handleDelete"
         />
       </div>
-      <load-more :needShowLoadMore="needShowLoadMore" />
+      <div class="flex justify-center items-center my-4 text-gray-500 text-sm">
+        <span ref="load-more" v-if="needShowLoadMore">
+          <icon-loading />
+          加载中
+        </span>
+        <span v-else>数据加载完成</span>
+      </div>
     </a-spin>
 
     <new-dataset-modal :visible="createType === '知识库'" @cancel="handleModalCancel" />

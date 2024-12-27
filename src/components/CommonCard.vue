@@ -8,7 +8,7 @@ const { description, createdAt, updatedAt } = defineProps<{
 }>()
 
 const timeLabel = updatedAt ? '更新时间' : '发布时间'
-const time = format(new Date(updatedAt || createdAt), 'MM-dd hh:mm')
+const time = format(new Date(updatedAt || createdAt), 'MM-dd HH:mm')
 </script>
 
 <template>
