@@ -65,17 +65,19 @@ export const usePagination = <T>(
       observer = null
     }
 
-    observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        if (pagination.currentPage < pagination.totalPage) {
-          pagination.currentPage += 1
-          loadData(false, route.query.search as string)
+    if (pagination.currentPage < pagination.totalPage) {
+      observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          if (pagination.currentPage < pagination.totalPage) {
+            pagination.currentPage += 1
+            loadData(false, route.query.search as string)
+          }
         }
-      }
-    }, options)
+      }, options)
 
-    if (loadMore.value) {
-      observer.observe(loadMore.value)
+      if (loadMore.value) {
+        observer.observe(loadMore.value)
+      }
     }
   }
 
@@ -112,7 +114,9 @@ export const usePagination = <T>(
 
   const reloadData = () => {
     resetPagination()
-    loadData(true, route.query.search as string)
+    loadData(true, route.query.search as string).then(() => {
+      initObserver()
+    })
   }
 
   const needShowLoadMore = computed(() => {

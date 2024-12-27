@@ -3,7 +3,7 @@ import { useRoute } from 'vue-router'
 import { getDocument, updateDocumentEnabled } from '@/services/document-service'
 import { onMounted, ref } from 'vue'
 import { usePagination } from './use-pagination'
-import { getSegmentsByPagination } from '@/services/segment-service'
+import { getSegmentsByPagination, deleteSegment } from '@/services/segment-service'
 
 export const useSegments = () => {
   const route = useRoute()
@@ -38,6 +38,12 @@ export const useSegments = () => {
     }
   }
 
+  const handleDelete = async (id: string) => {
+    await deleteSegment(datasetId, documentId, id)
+    reloadData()
+    loadDocument()
+  }
+
   return {
     datasetId,
     documentId,
@@ -48,5 +54,7 @@ export const useSegments = () => {
     reloadData,
     isLoading,
     needShowLoadMore,
+    handleDelete,
+    loadDocument,
   }
 }

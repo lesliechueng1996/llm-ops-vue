@@ -4,6 +4,9 @@ import TagHeader from '@/components/space/dataset/document/TagHeader.vue'
 import { format } from 'date-fns'
 import SearchInput from '@/components/SearchInput.vue'
 import SegmentCard from '@/components/space/dataset/document/segment/SegmentCard.vue'
+import CreateSegmentModal from '@/components/space/dataset/document/segment/CreateSegmentModal.vue'
+import { ref } from 'vue'
+import EditSegmentModal from '@/components/space/dataset/document/segment/EditSegmentModal.vue'
 
 const {
   belongDocument,
@@ -11,14 +14,27 @@ const {
   enableLoading,
   handleEnableChange,
   data,
-  isLoading,
   needShowLoadMore,
+  handleDelete,
+  reloadData,
+  loadDocument,
 } = useSegments()
+
+const createModalVisible = ref(false)
+const editSegmentId = ref<string | null>(null)
+
+const handleModalCancel = () => {
+  createModalVisible.value = false
+  editSegmentId.value = null
+  reloadData()
+  loadDocument()
+}
 </script>
 
 <template>
-  <div class="p-6 space-y-6">
+  <div class="p-6 space-y-6 flex flex-col h-screen">
     <tag-header
+      class="shrink-0"
       label="文档"
       :title="belongDocument?.name || ''"
       :tags="[
@@ -38,7 +54,7 @@ const {
     </tag-header>
 
     <!-- Action -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between shrink-0">
       <search-input placeholder="输入关键词搜索片段" />
       <div class="flex items-center gap-3">
         <a-button
@@ -52,7 +68,11 @@ const {
           ></div>
           <p>{{ belongDocument?.enabled ? '可用' : '已禁用' }}</p>
         </a-button>
-        <a-button class="rounded-lg font-bold text-sm text-white" type="outline">
+        <a-button
+          class="rounded-lg font-bold text-sm text-white"
+          type="outline"
+          @click="createModalVisible = true"
+        >
           <template #icon>
             <icon-file size="16" />
           </template>
@@ -61,10 +81,18 @@ const {
       </div>
     </div>
 
-    <a-spin class="w-full h-full" :loading="isLoading" tip="加载中...">
+    <div class="grow overflow-y-scroll">
       <div class="flex flex-wrap gap-5">
         <a-empty v-if="data.length === 0" />
-        <segment-card v-for="segment in data" :key="segment.id" :segment="segment" />
+        <segment-card
+          v-for="segment in data"
+          :key="segment.id"
+          :segment="segment"
+          class="cursor-pointer hover:shadow-lg"
+          @delete="handleDelete"
+          @enableChanged="reloadData"
+          @click="editSegmentId = segment.id"
+        />
       </div>
       <div class="flex justify-center items-center my-4 text-gray-500 text-sm">
         <span ref="load-more" v-if="needShowLoadMore">
@@ -73,7 +101,15 @@ const {
         </span>
         <span v-else>数据加载完成</span>
       </div>
-    </a-spin>
+    </div>
+
+    <create-segment-modal :visible="createModalVisible" @cancel="handleModalCancel" />
+    <edit-segment-modal
+      v-if="editSegmentId !== null"
+      :visible="editSegmentId !== null"
+      :id="editSegmentId"
+      @cancel="handleModalCancel"
+    />
   </div>
 </template>
 
