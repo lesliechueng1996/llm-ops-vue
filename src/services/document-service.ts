@@ -1,6 +1,11 @@
-import { type GetDocumentPaginationResponse } from '@/models/document-model'
+import {
+  type CreateDocumentsRequest,
+  type CreateDocumentsResponse,
+  type GetDocumentBatchResponse,
+  type GetDocumentPaginationResponse,
+} from '@/models/document-model'
 import { type BasePaginationReq, type BaseResponse } from '@/models/base'
-import { get, del, put } from '@/utils/request'
+import { get, del, put, post } from '@/utils/request'
 
 export const getDocumentPagination = async (
   datasetId: string,
@@ -32,5 +37,15 @@ export const updateDocumentEnabled = (datasetId: string, documentId: string, ena
     body: {
       enabled,
     },
+  })
+}
+
+export const getDocumentBatch = (datasetId: string, batchId: string) => {
+  return get<GetDocumentBatchResponse>(`/datasets/${datasetId}/documents/batch/${batchId}`)
+}
+
+export const createDocuments = (datasetId: string, data: CreateDocumentsRequest) => {
+  return post<CreateDocumentsResponse>(`/datasets/${datasetId}/documents`, {
+    body: data,
   })
 }

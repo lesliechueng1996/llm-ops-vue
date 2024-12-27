@@ -102,7 +102,11 @@ const getStatusMessage = (status: string, error: string) => {
           @click="showHitTestingModal = true"
           >召回测试</a-button
         >
-        <a-button class="rounded-lg font-bold text-sm text-white" type="primary">添加文件</a-button>
+        <router-link :to="{ name: 'space-datasets-documents-create', params: { datasetId } }">
+          <a-button class="rounded-lg font-bold text-sm text-white" type="primary"
+            >添加文件</a-button
+          >
+        </router-link>
       </div>
     </div>
 
