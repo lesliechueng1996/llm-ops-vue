@@ -60,12 +60,14 @@ watch(
     <!-- Body -->
     <div class="h-[650px] flex items-center py-6">
       <div class="grow w-0 shrink-0 h-full flex flex-col gap-8">
-        <hit-testing-textarea class="h-0 shrink-0 grow" @test="handleTest" />
-        <recent-query class="h-0 shrink-0 grow" :recent-queries="recentQueries" />
+        <!-- 使用 flex-basis 和 min-height 确保元素平分高度且不被压缩 -->
+        <hit-testing-textarea class="flex-[1_0_0%] min-h-[0%]" @test="handleTest" />
+        <recent-query class="flex-[1_0_0%] min-h-[0%]" :recent-queries="recentQueries" />
       </div>
-      <a-divider direction="vertical" />
+      <a-divider direction="vertical" class="h-full" />
       <div class="grow w-0 shrink-0 h-full overflow-y-scroll">
-        <a-grid :cols="2" :col-gap="20" :row-gap="22">
+        <a-empty v-if="hitDocs.length === 0" />
+        <a-grid v-else :cols="2" :col-gap="20" :row-gap="22">
           <a-grid-item v-for="hitDoc in hitDocs" :key="hitDoc.id">
             <hit-card :hit-doc="hitDoc" />
           </a-grid-item>
