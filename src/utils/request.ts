@@ -1,6 +1,8 @@
 import { API_PREFIX, httpCode } from '@/config'
 import type { BaseResponse } from '@/models/base'
 import { Message } from '@arco-design/web-vue'
+import { useCredentialStore } from '@/stores/credential'
+import router from '@/router'
 
 const TIMEOUT = 100 * 1000
 
@@ -44,6 +46,13 @@ const baseFetch = <T>(url: string, fetchOptions: FetchOptions): Promise<T> => {
     options.body = JSON.stringify(body)
   }
 
+  const { credential, clear: clearCredential } = useCredentialStore()
+  const { access_token } = credential
+
+  if (access_token) {
+    ;(options.headers as Headers).set('Authorization', `Bearer ${access_token}`)
+  }
+
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       controller.abort()
@@ -54,6 +63,12 @@ const baseFetch = <T>(url: string, fetchOptions: FetchOptions): Promise<T> => {
     fetch(urlWithPrefix, options as RequestInit)
       .then((res) => res.json() as Promise<BaseResponse<unknown>>)
       .then((json) => {
+        if (json.code === httpCode.unauthorized) {
+          clearCredential()
+          reject(json)
+          router.push('/auth/login')
+          return
+        }
         if (json.code !== httpCode.success) {
           Message.error(json.message)
           reject(json)
@@ -109,6 +124,13 @@ export const ssePost = async function* (url: string, fetchOptions: FetchOptions)
   const urlWithPrefix = `${API_PREFIX}${url.startsWith('/') ? url : `/${url}`}`
   if (options.body) {
     options.body = JSON.stringify(options.body)
+  }
+
+  const { credential } = useCredentialStore()
+  const { access_token } = credential
+
+  if (access_token) {
+    ;(options.headers as Headers).set('Authorization', `Bearer ${access_token}`)
   }
 
   const response = await fetch(urlWithPrefix, options as RequestInit)
@@ -167,6 +189,9 @@ export const upload = <T extends BaseResponse<unknown>>(
     const xhr = new XMLHttpRequest()
     const formData = new FormData()
 
+    const { credential, clear: clearCredential } = useCredentialStore()
+    const { access_token } = credential
+
     // 添加文件到FormData
     formData.append('file', file)
 
@@ -183,6 +208,12 @@ export const upload = <T extends BaseResponse<unknown>>(
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
           const response = JSON.parse(xhr.responseText) as BaseResponse<unknown>
+          if (response.code === httpCode.unauthorized) {
+            clearCredential()
+            reject(response)
+            router.push('/auth/login')
+            return
+          }
           if (response.code !== httpCode.success) {
             Message.error(response.message)
             reject(response)
@@ -221,6 +252,10 @@ export const upload = <T extends BaseResponse<unknown>>(
       Object.entries(options.headers).forEach(([key, value]) => {
         xhr.setRequestHeader(key, value)
       })
+    }
+
+    if (access_token) {
+      xhr.setRequestHeader('Authorization', `Bearer ${access_token}`)
     }
 
     xhr.withCredentials = true
