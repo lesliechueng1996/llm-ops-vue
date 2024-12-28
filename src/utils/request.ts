@@ -66,7 +66,7 @@ const baseFetch = <T>(url: string, fetchOptions: FetchOptions): Promise<T> => {
         if (json.code === httpCode.unauthorized) {
           clearCredential()
           reject(json)
-          router.push('/auth/login')
+          router.replace('/auth/login')
           return
         }
         if (json.code !== httpCode.success) {
@@ -211,7 +211,7 @@ export const upload = <T extends BaseResponse<unknown>>(
           if (response.code === httpCode.unauthorized) {
             clearCredential()
             reject(response)
-            router.push('/auth/login')
+            router.replace('/auth/login')
             return
           }
           if (response.code !== httpCode.success) {
