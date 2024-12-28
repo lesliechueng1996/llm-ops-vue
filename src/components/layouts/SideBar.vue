@@ -10,7 +10,12 @@ import IconTool from './icons/IconTool.vue'
 import IconToolFull from './icons/IconToolFull.vue'
 import IconOpenApi from './icons/IconOpenApi.vue'
 import IconOpenApiFull from './icons/IconOpenApiFull.vue'
+// import { logout } from '@/services/auth-service'
+import { useRouter } from 'vue-router'
+import { useCredentialStore } from '@/stores/credential'
 
+const { clear: clearCredential } = useCredentialStore()
+const router = useRouter()
 const menuItems = [
   { text: '首页', href: '/home', icon: IconHome, activeIcon: IconHomeFull },
   { text: '个人空间', href: '/space/apps', icon: IconSpace, activeIcon: IconSpaceFull },
@@ -20,6 +25,14 @@ const discoverItems = [
   { text: '插件广场', href: '/store/tools', icon: IconTool, activeIcon: IconToolFull },
   { text: '开放API', href: '/open', icon: IconOpenApi, activeIcon: IconOpenApiFull },
 ]
+
+const handleSelect = async (value: unknown) => {
+  if (value === 'logout') {
+    // await logout()
+    clearCredential()
+    router.replace('/auth/login')
+  }
+}
 </script>
 
 <template>
@@ -59,7 +72,7 @@ const discoverItems = [
       </div>
     </div>
     <div class="p-2">
-      <a-dropdown position="tl" trigger="hover">
+      <a-dropdown position="tl" trigger="hover" @select="handleSelect">
         <div class="flex items-center justify-start gap-2 cursor-pointer">
           <a-avatar class="bg-blue-700 w-8 h-8">A</a-avatar>
           <div>
@@ -68,8 +81,8 @@ const discoverItems = [
           </div>
         </div>
         <template #content>
-          <a-doption>账号设置</a-doption>
-          <a-doption class="text-red-800 hover:!text-red-900">退出登录</a-doption>
+          <a-doption value="setting">账号设置</a-doption>
+          <a-doption value="logout" class="text-red-800 hover:!text-red-900">退出登录</a-doption>
         </template>
       </a-dropdown>
     </div>
