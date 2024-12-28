@@ -10,11 +10,13 @@ import IconTool from './icons/IconTool.vue'
 import IconToolFull from './icons/IconToolFull.vue'
 import IconOpenApi from './icons/IconOpenApi.vue'
 import IconOpenApiFull from './icons/IconOpenApiFull.vue'
-// import { logout } from '@/services/auth-service'
+import { logout } from '@/services/auth-service'
 import { useRouter } from 'vue-router'
 import { useCredentialStore } from '@/stores/credential'
+import { useAccountStore } from '@/stores/account'
+import { ref } from 'vue'
+import AccountSettingModal from './AccountSettingModal.vue'
 
-const { clear: clearCredential } = useCredentialStore()
 const router = useRouter()
 const menuItems = [
   { text: '首页', href: '/home', icon: IconHome, activeIcon: IconHomeFull },
@@ -26,11 +28,19 @@ const discoverItems = [
   { text: '开放API', href: '/open', icon: IconOpenApi, activeIcon: IconOpenApiFull },
 ]
 
+const accountStore = useAccountStore()
+const credentialStore = useCredentialStore()
+
+const accountSettingModalVisible = ref(false)
 const handleSelect = async (value: unknown) => {
   if (value === 'logout') {
-    // await logout()
-    clearCredential()
+    await logout()
+    credentialStore.clear()
+    accountStore.clear()
     router.replace('/auth/login')
+  }
+  if (value === 'setting') {
+    accountSettingModalVisible.value = true
   }
 }
 </script>
@@ -74,10 +84,12 @@ const handleSelect = async (value: unknown) => {
     <div class="p-2">
       <a-dropdown position="tl" trigger="hover" @select="handleSelect">
         <div class="flex items-center justify-start gap-2 cursor-pointer">
-          <a-avatar class="bg-blue-700 w-8 h-8">A</a-avatar>
+          <a-avatar class="bg-blue-700 w-8 h-8 shrink-0">
+            <img :src="accountStore.account.avatar" alt="avatar" />
+          </a-avatar>
           <div>
-            <p class="text-sm text-gray-900">Leslie</p>
-            <p class="text-xs text-gray-500">xxxxxx@163.com</p>
+            <p class="text-sm text-gray-900 truncate max-w-40">{{ accountStore.account.name }}</p>
+            <p class="text-xs text-gray-500 truncate max-w-40">{{ accountStore.account.email }}</p>
           </div>
         </div>
         <template #content>
@@ -87,6 +99,8 @@ const handleSelect = async (value: unknown) => {
       </a-dropdown>
     </div>
   </aside>
+
+  <account-setting-modal v-model:visible="accountSettingModalVisible" />
 </template>
 
 <style scoped></style>

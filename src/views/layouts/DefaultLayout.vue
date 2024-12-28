@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import SideBar from '@/components/layouts/SideBar.vue'
+import { onMounted } from 'vue'
+import { getCurrentUser } from '@/services/account-service'
+import { useAccountStore } from '@/stores/account'
+
+const accountStore = useAccountStore()
+
+onMounted(async () => {
+  const response = await getCurrentUser()
+  accountStore.update(response.data)
+})
 </script>
 
 <template>
