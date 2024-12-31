@@ -93,9 +93,25 @@ const router = createRouter({
           component: () => import('@/views/auth/AuthorizeView.vue'),
         },
         {
-          path: 'space/apps/:id',
-          name: 'space-apps-detail',
-          component: () => import('@/views/space/apps/DetailView.vue'),
+          path: 'space/apps/:appId/',
+          component: () => import('@/views/space/apps/AppLayoutView.vue'),
+          children: [
+            {
+              path: 'detail',
+              name: 'space-apps-detail',
+              component: () => import('@/views/space/apps/DetailView.vue'),
+            },
+            {
+              path: 'published',
+              name: 'space-apps-published',
+              component: () => import('@/views/space/apps/PublishedView.vue'),
+            },
+            {
+              path: 'analysis',
+              name: 'space-apps-analysis',
+              component: () => import('@/views/space/apps/AnalysisView.vue'),
+            },
+          ],
         },
       ],
     },
