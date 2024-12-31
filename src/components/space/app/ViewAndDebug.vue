@@ -43,13 +43,6 @@ const sendMessage = async () => {
 
   try {
     isLoading.value = true
-    // const res = await debugApp(route.params.id as string, humanQuery)
-    // if (isLoading.value) {
-    //   messages.value.push({
-    //     role: 'ai',
-    //     content: res.data.content,
-    //   })
-    // }
     const res = debugAppStream(route.params.id as string, humanQuery)
     messages.value.push({
       role: 'ai',

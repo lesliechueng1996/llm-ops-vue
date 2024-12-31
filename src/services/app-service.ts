@@ -8,7 +8,7 @@ export const debugApp = async (appId: string, query: string): Promise<DebugAppRe
 }
 
 export const debugAppStream = (appId: string, query: string) => {
-  return ssePost(`/apps/${appId}/debug`, {
+  return ssePost(`/apps/${appId}/conversations`, {
     body: { query },
   })
 }
