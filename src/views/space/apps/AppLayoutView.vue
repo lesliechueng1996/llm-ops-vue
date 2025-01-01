@@ -60,7 +60,7 @@ const publishHistoryDrawerVisible = ref(false)
 
 <template>
   <div class="w-screen h-screen flex flex-col">
-    <header class="w-full h-[74px] bg-gray-50 shrink-0 flex items-center py-5 px-4">
+    <header class="w-full h-[74px] bg-gray-100 shrink-0 flex items-center py-5 px-4">
       <div class="flex items-center gap-3 w-0 grow shrink-0">
         <router-link to="/space/apps" class="size-6">
           <icon-left size="24" />

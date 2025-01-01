@@ -6,6 +6,7 @@ import {
   updateDraftConfig as updateDraftConfigService,
 } from '@/services/app-service'
 import { useRoute } from 'vue-router'
+import { Message } from '@arco-design/web-vue'
 
 type DraftConfig = GetDraftConfigResponse['data']
 
@@ -49,7 +50,54 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
   }
 
   // Long Term Memory
-  const isLongTermMemoryEnabled = computed(() => draftConfig.data?.long_term_memory.enable ?? false)
+  const isLongTermMemoryEnabled = computed({
+    get: () => draftConfig.data?.long_term_memory.enable ?? false,
+    set: (value: boolean) => {
+      if (draftConfig.data) {
+        draftConfig.data.long_term_memory.enable = value
+      }
+      updateDraftConfig({ long_term_memory: { enable: value } }).then(() => {
+        Message.success('保存成功')
+      })
+    },
+  })
+
+  // Opening Statement
+  const openingStatement = computed({
+    get: () => draftConfig.data?.opening_statement,
+    set: (value: string) => {
+      if (draftConfig.data) {
+        draftConfig.data.opening_statement = value
+      }
+    },
+  })
+
+  const saveOpeningStatement = async () => {
+    if (draftConfig.data) {
+      await updateDraftConfig({ opening_statement: draftConfig.data.opening_statement })
+    }
+  }
+
+  // Opening Questions
+  const openingQuestions = computed(() => draftConfig.data?.opening_questions ?? [])
+
+  const addOpeningQuestion = () => {
+    if (draftConfig.data && draftConfig.data.opening_questions.length < 3) {
+      draftConfig.data.opening_questions.push('')
+    }
+  }
+
+  const removeOpeningQuestion = (index: number) => {
+    if (draftConfig.data && draftConfig.data.opening_questions.length > 0) {
+      draftConfig.data.opening_questions.splice(index, 1)
+    }
+  }
+
+  const saveOpeningQuestions = async () => {
+    if (draftConfig.data) {
+      await updateDraftConfig({ opening_questions: draftConfig.data.opening_questions })
+    }
+  }
 
   return {
     draftConfig,
@@ -58,5 +106,11 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     savePresetPrompt,
     updateDraftConfig,
     isLongTermMemoryEnabled,
+    openingStatement,
+    saveOpeningStatement,
+    openingQuestions,
+    addOpeningQuestion,
+    removeOpeningQuestion,
+    saveOpeningQuestions,
   }
 })
