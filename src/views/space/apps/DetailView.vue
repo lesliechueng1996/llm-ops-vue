@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import ViewAndDebug from '@/components/space/app/ViewAndDebug.vue'
+import PresetPrompt from '@/components/space/app/PresetPrompt.vue'
+import { useDraftConfigStore } from '@/stores/draft-config'
+import { onMounted } from 'vue'
+
+const { loadDraftConfig } = useDraftConfigStore()
+
+onMounted(() => {
+  loadDraftConfig()
+})
 </script>
 
 <template>
@@ -8,7 +17,9 @@ import ViewAndDebug from '@/components/space/app/ViewAndDebug.vue'
     <div class="w-2/3 h-full flex flex-col bg-gray-50">
       <header class="w-full h-16 border-b-[1px] border-gray-200 shrink-0">应用编排</header>
       <div class="w-full flex flex-1">
-        <section class="w-1/2">人设与回复逻辑</section>
+        <section class="w-1/2">
+          <preset-prompt />
+        </section>
         <section class="w-1/2">应用能力</section>
       </div>
     </div>

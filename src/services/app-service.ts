@@ -1,9 +1,24 @@
-import type { GetAppDetailResponse, GetAppPublishHistoryResponse } from '@/models/app-model'
+import type {
+  GetAppDetailResponse,
+  GetAppPublishHistoryResponse,
+  GetDraftConfigResponse,
+  UpdateDraftConfigRequest,
+} from '@/models/app-model'
 import type { BasePaginationReq, BaseResponse } from '@/models/base'
-import { get, post, ssePost } from '@/utils/request'
+import { get, post, put, ssePost } from '@/utils/request'
 
 export const debugAppStream = (appId: string, query: string) => {
-  return ssePost(`/apps/${appId}/conversations`, {
+  return ssePost<{
+    id: string
+    task_id: string
+    event: string
+    thought: string
+    observation: string
+    tool: string
+    tool_input: string
+    answer: string
+    latency: number
+  }>(`/apps/${appId}/conversations`, {
     body: { query },
   })
 }
@@ -34,5 +49,15 @@ export const fallbackHistory = (appId: string, configVersionId: string) => {
     body: {
       app_config_version_id: configVersionId,
     },
+  })
+}
+
+export const getDraftConfig = (appId: string) => {
+  return get<GetDraftConfigResponse>(`/apps/${appId}/draft-app-config`)
+}
+
+export const updateDraftConfig = (appId: string, body: UpdateDraftConfigRequest) => {
+  return put<BaseResponse<unknown>>(`/apps/${appId}/draft-app-config`, {
+    body,
   })
 }

@@ -104,22 +104,12 @@ export const del = <T>(url: string, options: FetchOptions = {}): Promise<T> => {
   return baseFetch(url, { ...options, method: 'DELETE' })
 }
 
-type ServerEvent = {
+type ServerEvent<T> = {
   event: string
-  data: {
-    id: string
-    task_id: string
-    event: string
-    thought: string
-    observation: string
-    tool: string
-    tool_input: string
-    answer: string
-    latency: number
-  }
+  data: T
 }
 
-export const ssePost = async function* (url: string, fetchOptions: FetchOptions) {
+export const ssePost = async function* <T>(url: string, fetchOptions: FetchOptions) {
   const options = { ...baseFetchOptions, method: 'POST', ...fetchOptions }
   const urlWithPrefix = `${API_PREFIX}${url.startsWith('/') ? url : `/${url}`}`
   if (options.body) {
@@ -153,8 +143,8 @@ export const ssePost = async function* (url: string, fetchOptions: FetchOptions)
     const text = textDecoder.decode(value, { stream: true })
     const lines = text.split('\n')
     const pair: {
-      event: ServerEvent['event'] | null
-      data: ServerEvent['data'] | null
+      event: ServerEvent<T>['event'] | null
+      data: ServerEvent<T>['data'] | null
     } = {
       event: null,
       data: null,
@@ -167,7 +157,7 @@ export const ssePost = async function* (url: string, fetchOptions: FetchOptions)
       }
 
       if (!line.trim() && pair.event !== null && pair.data !== null) {
-        yield { ...(pair as ServerEvent) }
+        yield { ...(pair as ServerEvent<T>) }
         pair.event = null
         pair.data = null
       }
