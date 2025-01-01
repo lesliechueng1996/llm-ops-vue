@@ -1,4 +1,4 @@
-import type { BaseResponse } from './base'
+import type { BasePaginationResponse, BaseResponse } from './base'
 
 export type DebugAppResponse = BaseResponse<{
   content: string
@@ -13,5 +13,11 @@ export type GetAppDetailResponse = BaseResponse<{
   status: string
   draft_updated_at: number
   updated_at: number
+  created_at: number
+}>
+
+export type GetAppPublishHistoryResponse = BasePaginationResponse<{
+  id: string
+  version: number
   created_at: number
 }>

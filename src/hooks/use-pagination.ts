@@ -14,6 +14,7 @@ import { useRoute } from 'vue-router'
 
 export const usePagination = <T>(
   fetchFunction: (req: BasePaginationReq) => Promise<BasePaginationResponse<T>>,
+  doesLoadDataOnMounted: boolean = true,
   loadMoreRefKey: string = 'load-more',
 ) => {
   const pagination = reactive({ ...initPagination })
@@ -82,7 +83,9 @@ export const usePagination = <T>(
   }
 
   onMounted(async () => {
-    await loadData(true, route.query.search as string)
+    if (doesLoadDataOnMounted) {
+      await loadData(true, route.query.search as string)
+    }
 
     initObserver()
   })
@@ -129,5 +132,7 @@ export const usePagination = <T>(
     isLoading,
     pagination,
     needShowLoadMore,
+    loadData,
+    resetPagination,
   }
 }

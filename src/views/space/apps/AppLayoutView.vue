@@ -5,6 +5,7 @@ import { onMounted, ref } from 'vue'
 import type { GetAppDetailResponse } from '@/models/app-model'
 import { format } from 'date-fns'
 import { Message, Modal } from '@arco-design/web-vue'
+import PublishHistoryDrawer from '@/components/space/app/PublishHistoryDrawer.vue'
 
 const route = useRoute()
 
@@ -53,6 +54,8 @@ const cancelPublish = () => {
     },
   })
 }
+
+const publishHistoryDrawerVisible = ref(false)
 </script>
 
 <template>
@@ -101,7 +104,7 @@ const cancelPublish = () => {
         >
       </div>
       <div class="flex justify-end items-center gap-3 w-0 grow shrink-0">
-        <a-button type="secondary" class="rounded-lg">
+        <a-button type="secondary" class="rounded-lg" @click="publishHistoryDrawerVisible = true">
           <template #icon>
             <icon-clock-circle size="16" />
           </template>
@@ -133,6 +136,12 @@ const cancelPublish = () => {
     </header>
     <router-view />
   </div>
+  <publish-history-drawer
+    v-if="app"
+    v-model:visible="publishHistoryDrawerVisible"
+    :app="app"
+    @fallbacked="loadAppDetail"
+  />
 </template>
 
 <style scoped></style>
