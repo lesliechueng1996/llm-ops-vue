@@ -99,6 +99,19 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     }
   }
 
+  // Suggested After Answer
+  const isSuggestedAfterAnswerEnabled = computed({
+    get: () => draftConfig.data?.suggested_after_answer?.enable ?? false,
+    set: (value: boolean) => {
+      if (draftConfig.data) {
+        draftConfig.data.suggested_after_answer.enable = value
+      }
+      updateDraftConfig({ suggested_after_answer: { enable: value } }).then(() => {
+        Message.success('保存成功')
+      })
+    },
+  })
+
   return {
     draftConfig,
     loadDraftConfig,
@@ -112,5 +125,6 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     addOpeningQuestion,
     removeOpeningQuestion,
     saveOpeningQuestions,
+    isSuggestedAfterAnswerEnabled,
   }
 })

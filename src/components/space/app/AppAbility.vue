@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import LongTermMemory from './ability/LongTermMemory.vue'
 import OpeningStatement from './ability/OpeningStatement.vue'
+import SuggestedAfterAnswer from './ability/SuggestedAfterAnswer.vue'
 </script>
 
 <template>
@@ -9,6 +10,7 @@ import OpeningStatement from './ability/OpeningStatement.vue'
     <a-collapse :bordered="false" class="px-2">
       <long-term-memory />
       <opening-statement />
+      <suggested-after-answer />
     </a-collapse>
   </div>
 </template>

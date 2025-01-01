@@ -89,6 +89,9 @@ export type GetDraftConfigResponse = BaseResponse<{
       enable: boolean
     }
   }
+  suggested_after_answer: {
+    enable: boolean
+  }
   updated_at: number
   created_at: number
 }>
@@ -137,5 +140,8 @@ export type UpdateDraftConfigRequest = {
     outputs_config: {
       enable: boolean
     }
+  }
+  suggested_after_answer?: {
+    enable: boolean
   }
 }
