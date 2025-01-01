@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router'
 import { Message } from '@arco-design/web-vue'
 import ChatMessage from './ChatMessage.vue'
 import { debugAppStream } from '@/services/app-service'
+import { useDraftConfigStore } from '@/stores/draft-config'
+import LongTermMemoryModal from './LongTermMemoryModal.vue'
 
 type Message = {
   role: 'human' | 'ai'
@@ -15,6 +17,9 @@ const query = ref<string>('') // 输入框内容
 const isLoading = ref(false) // 是否正在加载
 const route = useRoute()
 const messageWrap = useTemplateRef<HTMLDivElement>('messages-wrap')
+const isLongTermMemoryModalVisible = ref(false)
+
+const draftConfigStore = useDraftConfigStore()
 
 const scrollMessageToBottom = () => {
   if (!messageWrap.value) {
@@ -80,10 +85,17 @@ watch([messages, isLoading], scrollMessageToBottom, {
       class="w-full h-16 px-4 flex shrink-0 justify-between items-center border-b-[1px] border-gray-200"
     >
       <h1 class="text-xl text-gray-900">预览与调试</h1>
-      <button class="p-1 text-blue-700 font-medium">
-        <icon-save class="mr-[6px] text-base" />
-        <span>长期记忆</span>
-      </button>
+      <a-button
+        v-if="draftConfigStore.isLongTermMemoryEnabled"
+        type="text"
+        class="rounded-lg"
+        @click="isLongTermMemoryModalVisible = true"
+      >
+        <template #icon>
+          <icon-save size="16" />
+        </template>
+        <template #default>长期记忆</template>
+      </a-button>
     </header>
     <section class="flex-1 overflow-y-scroll" ref="messages-wrap">
       <!-- empty chat message -->
@@ -135,6 +147,8 @@ watch([messages, isLoading], scrollMessageToBottom, {
       <p class="text-center text-xs text-gray-500">内容由AI生成，无法确保真实准确，仅供参考。</p>
     </section>
   </div>
+
+  <long-term-memory-modal v-model:visible="isLongTermMemoryModalVisible" />
 </template>
 
 <style scoped></style>

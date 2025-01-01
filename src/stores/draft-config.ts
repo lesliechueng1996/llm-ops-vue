@@ -48,5 +48,15 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     }
   }
 
-  return { draftConfig, loadDraftConfig, presetPrompt, savePresetPrompt, updateDraftConfig }
+  // Long Term Memory
+  const isLongTermMemoryEnabled = computed(() => draftConfig.data?.long_term_memory.enable ?? false)
+
+  return {
+    draftConfig,
+    loadDraftConfig,
+    presetPrompt,
+    savePresetPrompt,
+    updateDraftConfig,
+    isLongTermMemoryEnabled,
+  }
 })

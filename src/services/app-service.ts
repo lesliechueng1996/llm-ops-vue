@@ -61,3 +61,19 @@ export const updateDraftConfig = (appId: string, body: UpdateDraftConfigRequest)
     body,
   })
 }
+
+export const getLongTermMemory = (appId: string) => {
+  return get<
+    BaseResponse<{
+      summary: string
+    }>
+  >(`/apps/${appId}/summary`)
+}
+
+export const updateLongTermMemory = (appId: string, summary: string) => {
+  return put<BaseResponse<unknown>>(`/apps/${appId}/summary`, {
+    body: {
+      summary,
+    },
+  })
+}
