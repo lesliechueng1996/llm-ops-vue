@@ -112,6 +112,48 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     },
   })
 
+  // Review Config
+  const isReviewConfigEnabled = computed({
+    get: () => draftConfig.data?.review_config?.enable ?? false,
+    set: (value: boolean) => {
+      if (draftConfig.data) {
+        draftConfig.data.review_config.enable = value
+        if (value === false) {
+          updateDraftConfig({
+            review_config: {
+              enable: false,
+              keywords: draftConfig.data.review_config.keywords,
+              inputs_config: {
+                enable: false,
+                preset_response: draftConfig.data.review_config.inputs_config.preset_response,
+              },
+              outputs_config: {
+                enable: false,
+              },
+            },
+          }).then(() => {
+            Message.success('保存成功')
+          })
+        }
+      }
+    },
+  })
+
+  const reviewConfig = computed({
+    get: () => draftConfig.data?.review_config ?? null,
+    set: (value: DraftConfig['review_config']) => {
+      if (draftConfig.data) {
+        draftConfig.data.review_config = value
+      }
+    },
+  })
+
+  const saveReviewConfig = async () => {
+    if (draftConfig.data) {
+      await updateDraftConfig({ review_config: draftConfig.data.review_config })
+    }
+  }
+
   return {
     draftConfig,
     loadDraftConfig,
@@ -126,5 +168,8 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     removeOpeningQuestion,
     saveOpeningQuestions,
     isSuggestedAfterAnswerEnabled,
+    isReviewConfigEnabled,
+    reviewConfig,
+    saveReviewConfig,
   }
 })

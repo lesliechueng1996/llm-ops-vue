@@ -2,6 +2,7 @@
 import LongTermMemory from './ability/LongTermMemory.vue'
 import OpeningStatement from './ability/OpeningStatement.vue'
 import SuggestedAfterAnswer from './ability/SuggestedAfterAnswer.vue'
+import ReviewConfig from './ability/ReviewConfig.vue'
 </script>
 
 <template>
@@ -11,6 +12,7 @@ import SuggestedAfterAnswer from './ability/SuggestedAfterAnswer.vue'
       <long-term-memory />
       <opening-statement />
       <suggested-after-answer />
+      <review-config />
     </a-collapse>
   </div>
 </template>
