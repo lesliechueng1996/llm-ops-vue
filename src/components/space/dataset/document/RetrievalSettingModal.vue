@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { HitTestingStrategy } from '@/models/dataset-model'
 
 const props = defineProps<{
@@ -47,6 +47,17 @@ const handleConfirm = () => {
   })
   emit('update:visible', false)
 }
+
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (newVal) {
+      strategy.value = props.defaultSettings.strategy
+      maxResults.value = props.defaultSettings.maxResults
+      minScore.value = props.defaultSettings.minScore
+    }
+  },
+)
 </script>
 
 <template>

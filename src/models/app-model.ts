@@ -61,7 +61,7 @@ export type GetDraftConfigResponse = BaseResponse<{
     description: string
   }[]
   retrieval_config: {
-    retrieval_strategy: string
+    retrieval_strategy: 'full_text' | 'semantic' | 'hybrid'
     k: number
     score: number
   }

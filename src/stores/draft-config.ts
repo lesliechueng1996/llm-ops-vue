@@ -154,6 +154,37 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     }
   }
 
+  // Dataset Reference
+  const datasets = computed({
+    get: () => draftConfig.data?.datasets ?? [],
+    set: (value: DraftConfig['datasets']) => {
+      if (draftConfig.data) {
+        draftConfig.data.datasets = value
+      }
+    },
+  })
+
+  const saveDatasets = async () => {
+    if (draftConfig.data) {
+      await updateDraftConfig({ datasets: draftConfig.data.datasets.map((dataset) => dataset.id) })
+    }
+  }
+
+  const retrievalConfig = computed({
+    get: () => draftConfig.data?.retrieval_config ?? null,
+    set: (value: DraftConfig['retrieval_config']) => {
+      if (draftConfig.data) {
+        draftConfig.data.retrieval_config = value
+      }
+    },
+  })
+
+  const saveRetrievalConfig = async () => {
+    if (draftConfig.data) {
+      await updateDraftConfig({ retrieval_config: draftConfig.data.retrieval_config })
+    }
+  }
+
   return {
     draftConfig,
     loadDraftConfig,
@@ -171,5 +202,9 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     isReviewConfigEnabled,
     reviewConfig,
     saveReviewConfig,
+    datasets,
+    retrievalConfig,
+    saveDatasets,
+    saveRetrievalConfig,
   }
 })

@@ -17,11 +17,11 @@ onMounted(() => {
     <!-- 应用编排 -->
     <div class="w-2/3 h-full flex flex-col bg-gray-50">
       <header class="w-full h-16 border-b-[1px] border-gray-200 shrink-0">应用编排</header>
-      <div class="w-full flex flex-1">
-        <section class="w-1/2 border-r border-gray-200">
+      <div class="w-full flex flex-1 min-h-0">
+        <section class="w-1/2 border-r border-gray-200 h-full">
           <preset-prompt />
         </section>
-        <section class="w-1/2 border-r border-gray-200">
+        <section class="w-1/2 border-r border-gray-200 h-full">
           <app-ability />
         </section>
       </div>
