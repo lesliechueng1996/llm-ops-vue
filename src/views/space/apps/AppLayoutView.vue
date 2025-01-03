@@ -1,24 +1,20 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { getAppDetail, publishApp, cancelPublishApp } from '@/services/app-service'
+import { publishApp, cancelPublishApp } from '@/services/app-service'
 import { onMounted, ref } from 'vue'
-import type { GetAppDetailResponse } from '@/models/app-model'
 import { format } from 'date-fns'
 import { Message, Modal } from '@arco-design/web-vue'
 import PublishHistoryDrawer from '@/components/space/app/PublishHistoryDrawer.vue'
+import { useCurrentAppStore } from '@/stores/current-app'
 
 const route = useRoute()
 
 const appId = route.params.appId
-const app = ref<GetAppDetailResponse['data']>()
 
-const loadAppDetail = async () => {
-  const res = await getAppDetail(appId as string)
-  app.value = res.data
-}
+const currentAppStore = useCurrentAppStore()
 
 onMounted(async () => {
-  await loadAppDetail()
+  await currentAppStore.loadCurrentApp()
 })
 
 const publishLoading = ref(false)
@@ -27,7 +23,7 @@ const publish = async () => {
     publishLoading.value = true
     await publishApp(appId as string)
     Message.success('发布成功')
-    await loadAppDetail()
+    await currentAppStore.loadCurrentApp()
   } catch {
     Message.error('发布失败')
   } finally {
@@ -47,7 +43,7 @@ const cancelPublish = () => {
       try {
         await cancelPublishApp(appId as string)
         Message.success('取消发布成功')
-        await loadAppDetail()
+        await currentAppStore.loadCurrentApp()
       } catch {
         Message.error('取消发布失败')
       }
@@ -67,11 +63,13 @@ const publishHistoryDrawerVisible = ref(false)
         </router-link>
         <!-- <div class="size-8 bg-gradient-to-b rounded-sm from-[#C2E9FB] to-[#A1C4FD]"></div> -->
         <a-avatar class="size-8" shape="square">
-          <img alt="avatar" :src="app?.icon" />
+          <img alt="avatar" :src="currentAppStore.currentApp?.icon" />
         </a-avatar>
         <div>
           <div class="flex items-center gap-1">
-            <h1 class="text-sm font-medium text-gray-800">{{ app?.name }}</h1>
+            <h1 class="text-sm font-medium text-gray-800">
+              {{ currentAppStore.currentApp?.name }}
+            </h1>
             <icon-edit size="14" class="text-gray-500" />
           </div>
           <div class="flex items-center gap-3">
@@ -81,13 +79,18 @@ const publishHistoryDrawerVisible = ref(false)
             </div>
             <div class="flex items-center gap-0.5 text-xs text-gray-500">
               <icon-clock-circle size="12" />
-              <span>{{ app?.status === 'published' ? '已发布' : '草稿' }}</span>
+              <span>{{
+                currentAppStore.currentApp?.status === 'published' ? '已发布' : '草稿'
+              }}</span>
             </div>
             <a-tag
               class="bg-gray-200 rounded-md text-xs text-gray-500"
-              v-if="app?.draft_updated_at"
+              v-if="currentAppStore.currentApp?.draft_updated_at"
             >
-              已自动保存 {{ format(new Date(app.draft_updated_at * 1000), 'HH:mm:ss') }}
+              已自动保存
+              {{
+                format(new Date(currentAppStore.currentApp?.draft_updated_at * 1000), 'HH:mm:ss')
+              }}
             </a-tag>
           </div>
         </div>
@@ -125,7 +128,7 @@ const publishHistoryDrawerVisible = ref(false)
           更新发布
           <template #content>
             <a-doption
-              :disabled="app?.status !== 'published'"
+              :disabled="currentAppStore.currentApp?.status !== 'published'"
               class="text-red-500"
               @click="cancelPublish"
               >取消发布</a-doption
@@ -137,10 +140,10 @@ const publishHistoryDrawerVisible = ref(false)
     <router-view />
   </div>
   <publish-history-drawer
-    v-if="app"
+    v-if="currentAppStore.currentApp"
     v-model:visible="publishHistoryDrawerVisible"
-    :app="app"
-    @fallbacked="loadAppDetail"
+    :app="currentAppStore.currentApp"
+    @fallbacked="currentAppStore.loadCurrentApp"
   />
 </template>
 

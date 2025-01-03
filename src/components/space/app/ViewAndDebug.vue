@@ -6,11 +6,16 @@ import ChatMessage from './ChatMessage.vue'
 import { debugAppStream } from '@/services/app-service'
 import { useDraftConfigStore } from '@/stores/draft-config'
 import LongTermMemoryModal from './LongTermMemoryModal.vue'
+import { useCurrentAppStore } from '@/stores/current-app'
+import { storeToRefs } from 'pinia'
 
 type Message = {
   role: 'human' | 'ai'
   content: string
 }
+
+const { currentApp } = storeToRefs(useCurrentAppStore())
+const { openingStatement, openingQuestions } = storeToRefs(useDraftConfigStore())
 
 const messages = ref<Message[]>([]) // 聊天消息列表
 const query = ref<string>('') // 输入框内容
@@ -100,8 +105,28 @@ watch([messages, isLoading], scrollMessageToBottom, {
     <section class="flex-1 overflow-y-scroll" ref="messages-wrap">
       <!-- empty chat message -->
       <div v-if="messages.length === 0" class="text-center pt-48 space-y-2">
-        <a-avatar :size="70" shape="square">Arco</a-avatar>
-        <p class="text-gray-900 text-3xl font-bold">ChatGPT聊天机器人</p>
+        <a-avatar :size="70" shape="square">
+          <img :src="currentApp?.icon" alt="app-icon" />
+        </a-avatar>
+        <p class="text-gray-900 text-3xl font-bold">
+          {{ currentApp?.name }}
+        </p>
+        <p
+          v-if="openingStatement?.trim()"
+          class="text-gray-500 text-sm bg-gray-50 rounded-lg px-4 py-3 w-fit mx-auto max-w-[80%] text-start"
+        >
+          {{ openingStatement }}
+        </p>
+        <div v-if="openingQuestions?.length" class="flex max-w-[80%] mx-auto flex-wrap gap-2">
+          <div v-for="question in openingQuestions" :key="question">
+            <p
+              v-if="question.trim()"
+              class="text-gray-500 text-sm bg-white rounded-lg px-3 py-2 border border-gray-200"
+            >
+              {{ question }}
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- chat messages -->
@@ -112,8 +137,6 @@ watch([messages, isLoading], scrollMessageToBottom, {
           :role="message.role"
           :content="message.content"
         />
-        <!-- loading -->
-        <!-- <ai-message v-if="isLoading" :is-loading="true" /> -->
       </div>
     </section>
     <section class="py-4 shrink-0 space-y-3">
