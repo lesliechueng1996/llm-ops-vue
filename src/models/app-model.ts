@@ -32,7 +32,7 @@ export type GetDraftConfigResponse = BaseResponse<{
   dialog_round: number
   preset_prompt: string
   tools: {
-    type: string
+    type: 'builtin_tool' | 'api_tool'
     provider: {
       id: string
       name: string
@@ -45,7 +45,7 @@ export type GetDraftConfigResponse = BaseResponse<{
       name: string
       label: string
       description: string
-      params: Record<string, unknown>
+      params: Record<string, string | number | boolean>
     }
   }[]
   workflows: {
@@ -108,7 +108,7 @@ export type UpdateDraftConfigRequest = {
     type: 'builtin_tool' | 'api_tool'
     provider_id: string
     tool_id: string
-    params: Record<string, unknown>
+    params: Record<string, string | number | boolean>
   }[]
   workflows?: string[]
   datasets?: string[]

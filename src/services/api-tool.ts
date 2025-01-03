@@ -3,6 +3,7 @@ import {
   type CreateApiToolsResponse,
   type GetApiToolProvidersWithPageResponse,
   type GetApiToolResponse,
+  type GetSpecificApiToolResponse,
   type UpdateApiToolRequest,
   type ValidateOpenapiSchemaResponse,
 } from '@/models/api-tool'
@@ -49,4 +50,8 @@ export const updateApiTool = async (providerId: string, data: UpdateApiToolReque
 
 export const deleteApiTool = async (providerId: string) => {
   return del<BaseResponse<unknown>>(`/api-tools/${providerId}`)
+}
+
+export const getSpecificApiTool = (providerId: string, toolId: string) => {
+  return get<GetSpecificApiToolResponse>(`/api-tools/${providerId}/tools/${toolId}`)
 }

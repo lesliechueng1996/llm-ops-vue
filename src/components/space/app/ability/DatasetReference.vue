@@ -133,7 +133,7 @@ watch(modalVisible, (newVal) => {
         class="flex items-center justify-between gap-2 px-2 py-2.5 bg-white rounded-lg group cursor-pointer"
       >
         <div class="flex items-center gap-2">
-          <a-avatar class="size-8" shape="square">
+          <a-avatar class="size-8 shrink-0" shape="square">
             <img :src="dataset.icon" :alt="dataset.name" />
           </a-avatar>
           <div>

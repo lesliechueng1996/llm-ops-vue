@@ -185,6 +185,29 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     }
   }
 
+  // Tool Reference
+  const tools = computed({
+    get: () => draftConfig.data?.tools ?? [],
+    set: (value: DraftConfig['tools']) => {
+      if (draftConfig.data) {
+        draftConfig.data.tools = value
+      }
+    },
+  })
+
+  const saveTools = async () => {
+    if (draftConfig.data) {
+      await updateDraftConfig({
+        tools: draftConfig.data.tools.map((tool) => ({
+          type: tool.type,
+          provider_id: tool.provider.id,
+          tool_id: tool.tool.id,
+          params: tool.tool.params,
+        })),
+      })
+    }
+  }
+
   return {
     draftConfig,
     loadDraftConfig,
@@ -206,5 +229,7 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
     retrievalConfig,
     saveDatasets,
     saveRetrievalConfig,
+    tools,
+    saveTools,
   }
 })

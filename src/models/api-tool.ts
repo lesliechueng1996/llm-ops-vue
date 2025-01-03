@@ -60,3 +60,25 @@ export type UpdateApiToolRequest = {
     value: string
   }>
 }
+
+export type GetSpecificApiToolResponse = BaseResponse<{
+  id: string
+  name: string
+  description: string
+  inputs: Array<{
+    name: string
+    type: string
+    required: boolean
+    description: string
+  }>
+  provider: {
+    id: string
+    name: string
+    icon: string
+    description: string
+    headers: Array<{
+      key: string
+      value: string
+    }>
+  }
+}>

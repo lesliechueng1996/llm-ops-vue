@@ -43,3 +43,36 @@ export type GetBuiltinToolsResponse = BaseResponse<
     }>
   }>
 >
+
+export type GetSpecificBuiltinToolResponse = BaseResponse<{
+  provider: {
+    name: string
+    label: string
+    description: string
+    category: string
+    background: string
+  }
+  name: string
+  label: string
+  description: string
+  inputs: Array<{
+    name: string
+    description: string
+    type: string
+    required: boolean
+  }>
+  params: Array<{
+    name: string
+    label: string
+    type: 'string' | 'number' | 'boolean' | 'select'
+    required: boolean
+    default: string | number | boolean
+    min: number | null
+    max: number | null
+    help: string | null
+    options: Array<{
+      label: string
+      value: string
+    }>
+  }>
+}>
