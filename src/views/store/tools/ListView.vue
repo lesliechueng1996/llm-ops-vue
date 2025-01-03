@@ -2,6 +2,7 @@
 import { getCategories, getBuiltinTools } from '@/services/builtin-tool'
 import { type GetCategoriesResponse, type GetBuiltinToolsResponse } from '@/models/builtin-tool'
 import { onMounted, ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import ToolProviderCard from '@/components/ToolProviderCard.vue'
 import ToolProviderDrawer from '@/components/ToolProviderDrawer.vue'
 import CommonHeader from '@/components/CommonHeader.vue'
@@ -12,6 +13,8 @@ const categories = ref<GetCategoriesResponse['data']>([])
 const providers = ref<Provider[]>([])
 
 const selectedProvider = ref<Provider | null>(null)
+
+const router = useRouter()
 
 // filter
 const selectedCategory = ref<string>('')
@@ -39,12 +42,21 @@ onMounted(async () => {
     isLoading.value = false
   }
 })
+
+const handleCreateCustomTool = () => {
+  router.push('/space/tools')
+}
 </script>
 
 <template>
   <div class="h-screen px-6 flex flex-col">
     <!-- header -->
-    <common-header class="shrink-0" title="插件广场" btn-text="创建自定义插件">
+    <common-header
+      class="shrink-0"
+      title="插件广场"
+      btn-text="创建自定义插件"
+      @clickBtn="handleCreateCustomTool"
+    >
       <template #icon>
         <icon-common />
       </template>
