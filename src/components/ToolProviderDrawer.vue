@@ -5,7 +5,7 @@ import ToolProviderCardHeader, {
 import ToolCard from './ToolCard.vue'
 
 export type Provider = CardHeaderProvider & {
-  id: string
+  id?: string
   description: string
   created_at: number
 }
@@ -39,7 +39,7 @@ const emit = defineEmits<{
         v-if="canEdit"
         class="w-full rounded-lg mb-3"
         type="outline"
-        @click="emit('edit', selectedProvider.id)"
+        @click="emit('edit', selectedProvider.id ?? '')"
         ><icon-settings /> 编辑</a-button
       >
 
