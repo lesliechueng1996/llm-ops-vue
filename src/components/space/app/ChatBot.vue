@@ -29,6 +29,8 @@ const {
   stopConversation,
   shouldStopButtonDisplay,
   stopConversationLoading,
+  msgSuggestedQuestions,
+  currentMessageId,
 } = useChatBot(scroller)
 
 onMounted(async () => {
@@ -66,19 +68,15 @@ const scrollMessageToBottom = () => {
   scroller.value?.scrollToBottom()
 }
 
-// const clearMessages = () => {
-//   messages.value = []
-//   isLoading.value = false
-// }
-
-// watch([messages, isLoading], scrollMessageToBottom, {
-//   deep: true,
-//   flush: 'post',
-// })
+const handleClickQuestion = (question: string) => {
+  msgSuggestedQuestions.value = []
+  query.value = question
+  sendMessage()
+}
 </script>
 
 <template>
-  <section class="flex-1 min-h-0 relative" ref="messages-wrap">
+  <section class="flex-1 min-h-0 flex flex-col" ref="messages-wrap">
     <!-- empty chat message -->
     <div v-if="!messages || messages.length === 0" class="text-center pt-48 space-y-2">
       <a-avatar :size="70" shape="square">
@@ -98,7 +96,7 @@ const scrollMessageToBottom = () => {
           <p
             v-if="question.trim()"
             class="text-gray-500 text-sm bg-white cursor-pointer rounded-lg px-3 py-2 border border-gray-200"
-            @click="query = question"
+            @click="handleClickQuestion(question)"
           >
             {{ question }}
           </p>
@@ -111,7 +109,7 @@ const scrollMessageToBottom = () => {
       v-show="messages && messages.length > 0"
       ref="scroller"
       :items="messages"
-      class="px-6 h-full overflow-y-scroll"
+      class="px-6 grow min-h-0 overflow-y-scroll"
       :min-item-size="1"
       @scroll="handleScroll"
     >
@@ -125,22 +123,26 @@ const scrollMessageToBottom = () => {
               :content="item.answer"
               :thoughts="item.agentThoughts"
               :is-loading="isLoading && index === messages.length - 1"
+              :suggested-questions="currentMessageId === item.id ? msgSuggestedQuestions : []"
+              @click-question="handleClickQuestion"
             />
           </div>
         </dynamic-scroller-item>
       </template>
     </dynamic-scroller>
 
-    <a-button
-      v-if="shouldStopButtonDisplay"
-      :loading="stopConversationLoading"
-      type="outline"
-      class="absolute bottom-2 right-1/2 translate-x-1/2 rounded-lg"
-      @click="stopConversation"
-    >
-      <icon-poweroff class="text-base" />
-      停止响应
-    </a-button>
+    <div class="flex justify-center shrink-0">
+      <a-button
+        v-if="shouldStopButtonDisplay"
+        :loading="stopConversationLoading"
+        type="outline"
+        class="rounded-lg"
+        @click="stopConversation"
+      >
+        <icon-poweroff class="text-base" />
+        停止响应
+      </a-button>
+    </div>
   </section>
 
   <section class="py-4 shrink-0 space-y-3">

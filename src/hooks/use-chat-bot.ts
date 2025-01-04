@@ -10,6 +10,7 @@ import {
 import { QueueEvent, type GetConversationMessagesPaginationResponse } from '@/models/app-model'
 import { Message } from '@arco-design/web-vue'
 import { nanoid } from 'nanoid'
+import { suggestedQuestions } from '@/services/ai-service'
 
 interface RecycleScroller {
   scrollToBottom: () => void
@@ -45,6 +46,10 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
   const isMessagesLoading = ref(false)
 
   const taskId = ref<string | null>(null)
+  const currentMessageId = ref<string | null>(null)
+
+  const msgSuggestedQuestions = ref<string[]>([])
+
   let createdAt: number = 0
 
   const loadMessages = async (isInit: boolean) => {
@@ -151,6 +156,7 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
 
           if (lastMessage.id === tempId && data.message_id) {
             messages.value[messages.value.length - 1].id = data.message_id
+            currentMessageId.value = data.message_id
           }
 
           if (event !== QueueEvent.PING) {
@@ -200,6 +206,14 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
     } finally {
       isLoading.value = false
     }
+
+    if (currentMessageId.value) {
+      const res = await suggestedQuestions(currentMessageId.value)
+      msgSuggestedQuestions.value = res.data
+      setTimeout(() => {
+        scroller.value?.scrollToBottom()
+      }, 100)
+    }
   }
 
   const deleteConversation = async () => {
@@ -242,5 +256,7 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
     stopConversation,
     shouldStopButtonDisplay,
     stopConversationLoading,
+    msgSuggestedQuestions,
+    currentMessageId,
   }
 }

@@ -15,6 +15,11 @@ const props = defineProps<{
     latency: number
   }[]
   isLoading: boolean
+  suggestedQuestions: string[]
+}>()
+
+const emit = defineEmits<{
+  (e: 'click-question', question: string): void
 }>()
 
 const isThoughtsVisible = ref(false)
@@ -115,6 +120,17 @@ const displayThoughts = computed(() => {
           <icon-loading class="text-base" />
         </template>
       </p>
+
+      <div class="space-y-3" v-if="suggestedQuestions.length > 0">
+        <p
+          class="p-3 border border-gray-200 w-fit bg-gray-100 rounded-lg text-sm text-gray-500 cursor-pointer"
+          v-for="question in suggestedQuestions"
+          :key="question"
+          @click="emit('click-question', question)"
+        >
+          {{ question }}
+        </p>
+      </div>
     </div>
   </div>
 </template>
