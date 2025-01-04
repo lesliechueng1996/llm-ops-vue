@@ -145,3 +145,37 @@ export type UpdateDraftConfigRequest = {
     enable: boolean
   }
 }
+
+export enum QueueEvent {
+  LONG_TERM_MEMORY_RECALL = 'long_term_memory_recall',
+  AGENT_THOUGHT = 'agent_thought',
+  AGENT_MESSAGE = 'agent_message',
+  AGENT_ACTION = 'agent_action',
+  DATASET_RETRIEVAL = 'dataset_retrieval',
+  AGENT_END = 'agent_end',
+  STOP = 'stop',
+  ERROR = 'error',
+  TIMEOUT = 'timeout',
+  PING = 'ping',
+}
+
+export type GetConversationMessagesPaginationResponse = BasePaginationResponse<{
+  id: string
+  conversation_id: string
+  query: string
+  answer: string
+  total_token_count: number
+  latency: number
+  agent_thoughts: {
+    id: string
+    position: number
+    event: QueueEvent
+    thought: string
+    observation: string
+    tool: string
+    tool_input: Record<string, unknown>
+    latency: number
+    created_at: number
+  }[]
+  created_at: number
+}>

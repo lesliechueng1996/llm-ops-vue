@@ -1,6 +1,7 @@
 import type {
   GetAppDetailResponse,
   GetAppPublishHistoryResponse,
+  GetConversationMessagesPaginationResponse,
   GetDraftConfigResponse,
   UpdateDraftConfigRequest,
 } from '@/models/app-model'
@@ -10,14 +11,14 @@ import { get, post, put, ssePost } from '@/utils/request'
 export const debugAppStream = (appId: string, query: string) => {
   return ssePost<{
     id: string
+    conversation_id: string
+    message_id: string
     task_id: string
-    event: string
     thought: string
     observation: string
-    tool: string
-    tool_input: string
     answer: string
     latency: number
+    created_at: number
   }>(`/apps/${appId}/conversations`, {
     body: { query },
   })
@@ -75,5 +76,24 @@ export const updateLongTermMemory = (appId: string, summary: string) => {
     body: {
       summary,
     },
+  })
+}
+
+export const getConversationMessagesPagination = (
+  pageParams: BasePaginationReq,
+  appId: string,
+  createdAt?: number,
+) => {
+  const params: Record<string, string | number | boolean> = {
+    current_page: pageParams.current_page,
+    page_size: pageParams.page_size,
+  }
+
+  if (createdAt) {
+    params.created_at = createdAt
+  }
+
+  return get<GetConversationMessagesPaginationResponse>(`/apps/${appId}/conversations/messages`, {
+    params,
   })
 }
