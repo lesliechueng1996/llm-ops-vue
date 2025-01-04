@@ -1,7 +1,11 @@
 import { nextTick, reactive, ref, type ShallowRef } from 'vue'
 import { initPagination } from '@/config'
 import { useRoute } from 'vue-router'
-import { debugAppStream, getConversationMessagesPagination } from '@/services/app-service'
+import {
+  debugAppStream,
+  deleteDebugConversation,
+  getConversationMessagesPagination,
+} from '@/services/app-service'
 import { QueueEvent, type GetConversationMessagesPaginationResponse } from '@/models/app-model'
 import { Message } from '@arco-design/web-vue'
 import { nanoid } from 'nanoid'
@@ -184,6 +188,16 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
     }
   }
 
+  const deleteConversation = async () => {
+    pagination.currentPage = initPagination.currentPage
+    pagination.pageSize = initPagination.pageSize
+    pagination.totalPage = initPagination.totalPage
+    pagination.totalRecord = initPagination.totalRecord
+
+    await deleteDebugConversation(appId)
+    await loadMessages(true)
+  }
+
   return {
     messages,
     query,
@@ -191,5 +205,6 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
     isMessagesLoading,
     loadMessages,
     sendMessage,
+    deleteConversation,
   }
 }

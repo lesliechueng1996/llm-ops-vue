@@ -6,7 +6,7 @@ import type {
   UpdateDraftConfigRequest,
 } from '@/models/app-model'
 import type { BasePaginationReq, BaseResponse } from '@/models/base'
-import { get, post, put, ssePost } from '@/utils/request'
+import { del, get, post, put, ssePost } from '@/utils/request'
 
 export const debugAppStream = (appId: string, query: string) => {
   return ssePost<{
@@ -96,4 +96,8 @@ export const getConversationMessagesPagination = (
   return get<GetConversationMessagesPaginationResponse>(`/apps/${appId}/conversations/messages`, {
     params,
   })
+}
+
+export const deleteDebugConversation = (appId: string) => {
+  return del<BaseResponse<unknown>>(`/apps/${appId}/conversations/debug`)
 }

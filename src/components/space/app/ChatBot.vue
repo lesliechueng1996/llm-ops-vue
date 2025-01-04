@@ -18,8 +18,15 @@ const { openingStatement, openingQuestions } = storeToRefs(useDraftConfigStore()
 const { account } = storeToRefs(useAccountStore())
 
 const scroller = useTemplateRef<RecycleScroller>('scroller')
-const { messages, query, isLoading, loadMessages, isMessagesLoading, sendMessage } =
-  useChatBot(scroller)
+const {
+  messages,
+  query,
+  isLoading,
+  loadMessages,
+  isMessagesLoading,
+  sendMessage,
+  deleteConversation,
+} = useChatBot(scroller)
 
 onMounted(async () => {
   await loadMessages(true)
@@ -123,7 +130,7 @@ const scrollMessageToBottom = () => {
 
   <section class="py-4 shrink-0 space-y-3">
     <div class="px-9 flex items-center">
-      <a-button class="mr-5 shrink-0" type="text" shape="circle">
+      <a-button class="mr-5 shrink-0" type="text" shape="circle" @click="deleteConversation">
         <icon-brush class="text-base" />
       </a-button>
       <div
