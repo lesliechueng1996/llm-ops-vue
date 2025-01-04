@@ -26,6 +26,9 @@ const {
   isMessagesLoading,
   sendMessage,
   deleteConversation,
+  stopConversation,
+  shouldStopButtonDisplay,
+  stopConversationLoading,
 } = useChatBot(scroller)
 
 onMounted(async () => {
@@ -75,7 +78,7 @@ const scrollMessageToBottom = () => {
 </script>
 
 <template>
-  <section class="flex-1 min-h-0" ref="messages-wrap">
+  <section class="flex-1 min-h-0 relative" ref="messages-wrap">
     <!-- empty chat message -->
     <div v-if="!messages || messages.length === 0" class="text-center pt-48 space-y-2">
       <a-avatar :size="70" shape="square">
@@ -94,7 +97,8 @@ const scrollMessageToBottom = () => {
         <div v-for="question in openingQuestions" :key="question">
           <p
             v-if="question.trim()"
-            class="text-gray-500 text-sm bg-white rounded-lg px-3 py-2 border border-gray-200"
+            class="text-gray-500 text-sm bg-white cursor-pointer rounded-lg px-3 py-2 border border-gray-200"
+            @click="query = question"
           >
             {{ question }}
           </p>
@@ -126,6 +130,17 @@ const scrollMessageToBottom = () => {
         </dynamic-scroller-item>
       </template>
     </dynamic-scroller>
+
+    <a-button
+      v-if="shouldStopButtonDisplay"
+      :loading="stopConversationLoading"
+      type="outline"
+      class="absolute bottom-2 right-1/2 translate-x-1/2 rounded-lg"
+      @click="stopConversation"
+    >
+      <icon-poweroff class="text-base" />
+      停止响应
+    </a-button>
   </section>
 
   <section class="py-4 shrink-0 space-y-3">

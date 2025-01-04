@@ -101,3 +101,7 @@ export const getConversationMessagesPagination = (
 export const deleteDebugConversation = (appId: string) => {
   return del<BaseResponse<unknown>>(`/apps/${appId}/conversations/debug`)
 }
+
+export const stopConversationTask = (appId: string, taskId: string) => {
+  return post<BaseResponse<unknown>>(`/apps/${appId}/conversations/tasks/${taskId}/stop`)
+}

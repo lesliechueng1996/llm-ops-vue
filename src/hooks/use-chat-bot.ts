@@ -1,10 +1,11 @@
-import { nextTick, reactive, ref, type ShallowRef } from 'vue'
+import { computed, nextTick, reactive, ref, type ShallowRef } from 'vue'
 import { initPagination } from '@/config'
 import { useRoute } from 'vue-router'
 import {
   debugAppStream,
   deleteDebugConversation,
   getConversationMessagesPagination,
+  stopConversationTask,
 } from '@/services/app-service'
 import { QueueEvent, type GetConversationMessagesPaginationResponse } from '@/models/app-model'
 import { Message } from '@arco-design/web-vue'
@@ -29,6 +30,7 @@ export type Message = {
     observation: string
     latency: number
   }[]
+  createdAt: number
 }
 
 export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>>) => {
@@ -42,8 +44,16 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
   const pagination = reactive({ ...initPagination })
   const isMessagesLoading = ref(false)
 
-  const loadMessages = async (isInit: boolean, createdAt?: number) => {
+  const taskId = ref<string | null>(null)
+  let createdAt: number = 0
+
+  const loadMessages = async (isInit: boolean) => {
     isMessagesLoading.value = true
+    if (isInit) {
+      createdAt = 0
+    } else {
+      createdAt = messages.value[messages.value.length - 1].createdAt ?? 0
+    }
     try {
       const res = await getConversationMessagesPagination(
         {
@@ -71,6 +81,7 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
             observation: thought.observation,
             latency: thought.latency,
           })),
+          createdAt: item.created_at,
         }))
       }
 
@@ -116,6 +127,7 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
       totalTokenCount: 0,
       latency: 0,
       agentThoughts: [],
+      createdAt: 0,
     })
     nextTick(() => {
       scroller.value?.scrollToBottom()
@@ -133,6 +145,7 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
           const data = item.data
 
           const eventId = data.id
+          taskId.value = data.task_id
           const lastMessage = messages.value[messages.value.length - 1]
           const agentThoughts = lastMessage.agentThoughts
 
@@ -166,6 +179,7 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
               }
 
               messages.value[messages.value.length - 1].answer += data.thought
+              messages.value[messages.value.length - 1].createdAt = data.created_at
             } else {
               position += 1
               agentThoughts.push({
@@ -194,9 +208,28 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
     pagination.totalPage = initPagination.totalPage
     pagination.totalRecord = initPagination.totalRecord
 
+    await stopConversation()
     await deleteDebugConversation(appId)
     await loadMessages(true)
   }
+
+  const stopConversationLoading = ref(false)
+  const stopConversation = async () => {
+    if (!taskId.value) {
+      return
+    }
+    try {
+      stopConversationLoading.value = true
+      await stopConversationTask(appId, taskId.value)
+    } finally {
+      taskId.value = null
+      stopConversationLoading.value = false
+    }
+  }
+
+  const shouldStopButtonDisplay = computed(() => {
+    return taskId.value !== null && isLoading.value
+  })
 
   return {
     messages,
@@ -206,5 +239,8 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
     loadMessages,
     sendMessage,
     deleteConversation,
+    stopConversation,
+    shouldStopButtonDisplay,
+    stopConversationLoading,
   }
 }
