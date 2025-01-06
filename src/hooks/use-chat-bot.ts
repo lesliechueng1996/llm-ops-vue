@@ -122,6 +122,8 @@ export const useChatBot = (scroller: Readonly<ShallowRef<RecycleScroller | null>
       return
     }
 
+    msgSuggestedQuestions.value = []
+
     const humanQuery = query.value
     query.value = ''
     const tempId = nanoid()

@@ -70,13 +70,9 @@ const displayThoughts = computed(() => {
       <a-collapse
         :active-key="isThoughtsVisible ? ['1'] : []"
         @change="onParentCollapseChange"
-        class="rounded-lg"
+        class="rounded-lg max-w-80 min-w-72"
       >
-        <a-collapse-item
-          class="min-w-72"
-          :header="`${isThoughtsVisible ? '隐藏' : '展开'}运行流程`"
-          key="1"
-        >
+        <a-collapse-item :header="`${isThoughtsVisible ? '隐藏' : '展开'}运行流程`" key="1">
           <template #expand-icon>
             <icon-list />
           </template>
