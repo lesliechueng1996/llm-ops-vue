@@ -57,9 +57,20 @@ const router = createRouter({
           component: () => import('@/views/store/tools/ListView.vue'),
         },
         {
-          path: 'open',
-          name: 'open-index',
-          component: () => import('@/views/open/IndexView.vue'),
+          path: 'open/',
+          component: () => import('@/views/open/OpenLayoutView.vue'),
+          children: [
+            {
+              path: '',
+              name: 'open-index',
+              component: () => import('@/views/open/QuickStartView.vue'),
+            },
+            {
+              path: 'api-key',
+              name: 'open-api-key',
+              component: () => import('@/views/open/ApiKeyView.vue'),
+            },
+          ],
         },
         {
           path: 'space/datasets/:datasetId/documents',

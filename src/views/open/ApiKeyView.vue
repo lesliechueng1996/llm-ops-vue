@@ -1,5 +1,7 @@
 <script setup lang="ts"></script>
 
-<template>open/index</template>
+<template>
+  <div>ApiKeyView.vue</div>
+</template>
 
 <style scoped></style>

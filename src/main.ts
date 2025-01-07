@@ -15,6 +15,10 @@ import '@/assets/styles/main.css'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
+import 'highlight.js/styles/github-dark.min.css'
+import 'highlight.js/lib/common'
+import hljsVuePlugin from '@highlightjs/vue-plugin'
+
 const app = createApp(App)
 
 app.use(createPinia())
@@ -24,5 +28,7 @@ app.use(ArcoVueIcon)
 
 app.component('DynamicScroller', DynamicScroller)
 app.component('DynamicScrollerItem', DynamicScrollerItem)
+
+app.use(hljsVuePlugin)
 
 app.mount('#app')
