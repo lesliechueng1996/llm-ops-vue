@@ -9,12 +9,12 @@ import { useCurrentAppStore } from '@/stores/current-app'
 
 const route = useRoute()
 
-const appId = route.params.appId
+const appId = route.params.appId as string
 
 const currentAppStore = useCurrentAppStore()
 
 onMounted(async () => {
-  await currentAppStore.loadCurrentApp()
+  await currentAppStore.loadCurrentApp(appId)
 })
 
 const publishLoading = ref(false)
@@ -23,7 +23,7 @@ const publish = async () => {
     publishLoading.value = true
     await publishApp(appId as string)
     Message.success('发布成功')
-    await currentAppStore.loadCurrentApp()
+    await currentAppStore.loadCurrentApp(appId)
   } catch {
     Message.error('发布失败')
   } finally {
@@ -43,7 +43,7 @@ const cancelPublish = () => {
       try {
         await cancelPublishApp(appId as string)
         Message.success('取消发布成功')
-        await currentAppStore.loadCurrentApp()
+        await currentAppStore.loadCurrentApp(appId)
       } catch {
         Message.error('取消发布失败')
       }

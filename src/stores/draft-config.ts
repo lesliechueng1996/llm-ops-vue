@@ -12,9 +12,9 @@ type DraftConfig = GetDraftConfigResponse['data']
 
 export const useDraftConfigStore = defineStore('draft-config', () => {
   const route = useRoute()
-  const appId = route.params.appId as string
+  const appId = computed(() => route.params.appId as string)
 
-  if (!appId) {
+  if (!appId.value) {
     throw new Error('appId is required')
   }
 
@@ -25,12 +25,12 @@ export const useDraftConfigStore = defineStore('draft-config', () => {
   })
 
   const loadDraftConfig = async () => {
-    const res = await getDraftConfig(appId)
+    const res = await getDraftConfig(appId.value)
     draftConfig.data = res.data
   }
 
   const updateDraftConfig = async (body: UpdateDraftConfigRequest) => {
-    await updateDraftConfigService(appId, body)
+    await updateDraftConfigService(appId.value, body)
   }
 
   // PresetPrompt

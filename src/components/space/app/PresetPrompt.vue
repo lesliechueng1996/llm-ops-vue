@@ -12,6 +12,8 @@ const handleBlur = async () => {
 }
 
 const handleOptimize = async () => {
+  optimizeResult.value = ''
+
   try {
     optimizeLoading.value = true
     showOptimizeResult.value = true

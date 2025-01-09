@@ -179,3 +179,30 @@ export type GetConversationMessagesPaginationResponse = BasePaginationResponse<{
   }[]
   created_at: number
 }>
+
+export type GetAppsPaginationResponse = BasePaginationResponse<{
+  id: string
+  name: string
+  icon: string
+  description: string
+  preset_prompt: string
+  model_config: {
+    provider: string
+    model: string
+  }
+  status: string
+  updated_at: number
+  created_at: number
+}>
+
+export type UpdateAppInfoRequest = {
+  name: string
+  icon: string
+  description: string
+}
+
+export type CreateAppRequest = {
+  name: string
+  icon: string
+  description: string
+}

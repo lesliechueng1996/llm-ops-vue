@@ -18,10 +18,13 @@ const { label, icon, background = '#FFF', href } = defineProps<CardHeader>()
       :style="{ backgroundColor: background }"
     ></a-avatar>
     <div class="grow">
-      <p v-if="!href" class="text-gray-700 font-bold text-base">{{ label }}</p>
-      <router-link :to="href" v-else class="text-gray-700 font-bold text-base">{{
-        label
-      }}</router-link>
+      <div class="flex items-center gap-2">
+        <p v-if="!href" class="text-gray-700 font-bold text-base">{{ label }}</p>
+        <router-link :to="href" v-else class="text-gray-700 font-bold text-base">{{
+          label
+        }}</router-link>
+        <slot name="badge" />
+      </div>
       <p class="text-gray-500 text-xs">
         <slot name="name" />
       </p>

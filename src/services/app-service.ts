@@ -1,8 +1,11 @@
 import type {
+  CreateAppRequest,
   GetAppDetailResponse,
   GetAppPublishHistoryResponse,
+  GetAppsPaginationResponse,
   GetConversationMessagesPaginationResponse,
   GetDraftConfigResponse,
+  UpdateAppInfoRequest,
   UpdateDraftConfigRequest,
 } from '@/models/app-model'
 import type { BasePaginationReq, BaseResponse } from '@/models/base'
@@ -104,4 +107,45 @@ export const deleteDebugConversation = (appId: string) => {
 
 export const stopConversationTask = (appId: string, taskId: string) => {
   return post<BaseResponse<unknown>>(`/apps/${appId}/conversations/tasks/${taskId}/stop`)
+}
+
+export const getAppsPagination = (req: BasePaginationReq) => {
+  const params: Record<string, string | number | boolean> = {
+    current_page: req.current_page,
+    page_size: req.page_size,
+  }
+  if (req.search_word) {
+    params.search_word = req.search_word
+  }
+  return get<GetAppsPaginationResponse>(`/apps`, {
+    params,
+  })
+}
+
+export const copyApp = (appId: string) => {
+  return post<
+    BaseResponse<{
+      app_id: string
+    }>
+  >(`/apps/${appId}/copy`)
+}
+
+export const deleteApp = (appId: string) => {
+  return del<BaseResponse<unknown>>(`/apps/${appId}`)
+}
+
+export const updateAppInfo = (req: UpdateAppInfoRequest, appId: string) => {
+  return put<BaseResponse<unknown>>(`/apps/${appId}`, {
+    body: req,
+  })
+}
+
+export const createApp = (req: CreateAppRequest) => {
+  return post<
+    BaseResponse<{
+      id: string
+    }>
+  >(`/apps`, {
+    body: req,
+  })
 }

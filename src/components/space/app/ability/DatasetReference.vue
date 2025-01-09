@@ -116,7 +116,6 @@ watch(modalVisible, (newVal) => {
       maxResults: draftConfigStore.retrievalConfig?.k ?? 4,
       minScore: draftConfigStore.retrievalConfig?.score ?? 0.5,
     }
-    console.log(defaultRetrievalSettings.value)
   }
 })
 </script>
