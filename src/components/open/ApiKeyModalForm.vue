@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Message } from '@arco-design/web-vue'
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 
 export type FormData = {
   isActive: boolean
@@ -36,6 +36,16 @@ const handleOk = () => {
 const handleCancel = () => {
   emit('update:visible', false)
 }
+
+watch(
+  () => props.visible,
+  (value) => {
+    if (value) {
+      form.remark = props.data.remark
+      form.isActive = props.data.isActive
+    }
+  },
+)
 </script>
 
 <template>
