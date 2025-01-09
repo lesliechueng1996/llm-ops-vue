@@ -11,7 +11,7 @@ export type Props = {
   description: string
   updatedAt: number
   createdAt: number
-  href: string
+  href?: string
 }
 
 defineProps<Props>()

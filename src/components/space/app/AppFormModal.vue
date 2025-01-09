@@ -42,6 +42,8 @@ const handleOk = async () => {
     if (file.value) {
       const res = await uploadImage(file.value)
       form.icon = res.data.image_url
+    } else if (initialData.icon) {
+      form.icon = initialData.icon
     } else {
       Message.error('请上传应用图标')
       return
